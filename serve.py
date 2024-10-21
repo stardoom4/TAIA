@@ -36,19 +36,20 @@ def generate_html_file(entry, entries, output_dir):
     description = entry.get('DESCRIPTION', 'No content available.')
     under = entry.get('UNDER', None)
 
-    # Create HTML content with dynamic navigation
+    # Generate the navigation menu with dynamic visibility for subpages
     html_content = f"""<html>
 <head>
     <title>{title}</title>
-    <link rel="stylesheet" type="text/css" href="style.css">  <!-- Corrected CSS path -->
+    <link rel="stylesheet" type="text/css" href="style.css">  <!-- CSS path -->
 </head>
 <body>
-<div class="sidebar">
     <nav>
+    <div class="sidebar">
         <ul>
-            {generate_master_navigation(entries)}
+            {generate_master_navigation(entries, entry)}
         </ul>
-    </nav></div>
+    </nav>
+    </div>
     <h1>{title}</h1>
     {description}  <!-- Description can contain HTML tags -->
 </body>
@@ -59,23 +60,29 @@ def generate_html_file(entry, entries, output_dir):
     with open(os.path.join(output_dir, file_name), 'w') as html_file:
         html_file.write(html_content)
 
-def generate_master_navigation(entries):
+def generate_master_navigation(entries, current_entry):
     nav_links = []
+    
+    # Get the master pages
     master_pages = [entry for entry in entries if 'UNDER' not in entry]
     
     for master_entry in master_pages:
         master_title = master_entry['TITLE']
-        nav_links.append(f'<li><a href="{master_title.replace(" ", "_").lower()}.html">{master_title}</a></li>')
-        
-        # Add subpage links for this master page
-        sub_nav_links = [
-            f'<li style="margin-left:20px;"><a href="{entry["TITLE"].replace(" ", "_").lower()}.html">{entry["TITLE"]}</a></li>'
-            for entry in entries if entry.get('UNDER') == master_title
-        ]
-        
-        if sub_nav_links:
-            nav_links.append('<ul>' + ''.join(sub_nav_links) + '</ul>')
+        master_file_name = f"{master_title.replace(' ', '_').lower()}.html"
 
+        # Add master page link
+        nav_links.append(f'<li><a href="{master_file_name}">{master_title}</a></li>')
+
+        # If the current page is a master page, show its subpages
+        if master_entry == current_entry:  # Check if we are on a master page
+            sub_nav_links = [
+                f'<li style="margin-left:20px;"><a href="{entry["TITLE"].replace(" ", "_").lower()}.html">{entry["TITLE"]}</a></li>'
+                for entry in entries if entry.get('UNDER') == master_title
+            ]
+            
+            if sub_nav_links:
+                nav_links.append('<ul>' + ''.join(sub_nav_links) + '</ul>')
+    
     return "\n".join(nav_links)
 
 # Example usage
