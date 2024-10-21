@@ -43,9 +43,7 @@ def generate_html_file(entry, entries, output_dir):
     <link rel="stylesheet" type="text/css" href="style.css">  <!-- CSS path -->
 </head>
 <body>
-<input type="checkbox" id="sidebar-toggle">
-    <label for="sidebar-toggle" class="toggle-btn" aria-label="Toggle Sidebar">☰</label>
-
+<button class="toggle-btn" aria-label="Toggle Sidebar">☰</button>
     <nav>
     <div class="sidebar">
         <ul>
@@ -55,6 +53,14 @@ def generate_html_file(entry, entries, output_dir):
     </div>
     <h1>{title}</h1>
     {description}  <!-- Description can contain HTML tags -->
+    <script>
+        const toggleBtn = document.querySelector('.toggle-btn');
+        const sidebar = document.querySelector('.sidebar');
+
+        toggleBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+        });
+    </script>
 </body>
 </html>
 """
