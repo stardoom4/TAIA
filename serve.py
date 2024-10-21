@@ -58,8 +58,7 @@ def generate_html_file(entry, entries, output_dir):
         const sidebar = document.querySelector('.sidebar');
 
         toggleBtn.addEventListener('click', () => {
-            sidebar.classList.toggle('active');
-        });
+            sidebar.classList.toggle('active');}); 
     </script>
 </body>
 </html>
