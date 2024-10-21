@@ -1,8 +1,13 @@
 import os
+import shutil
 
 def generate_html_from_taia(file_path, output_dir):
     os.makedirs(output_dir, exist_ok=True)  # Create output directory if it doesn't exist
     entries = read_taia_file(file_path)
+
+    # Copy the style.css file to the output directory
+    if os.path.exists('style.css'):
+        shutil.copy('style.css', os.path.join(output_dir, 'style.css'))
 
     # Generate each HTML file based on the entries
     for entry in entries:
@@ -35,7 +40,7 @@ def generate_html_file(entry, entries, output_dir):
     html_content = f"""<html>
 <head>
     <title>{title}</title>
-    <link rel="stylesheet" type="text/css" href="style.css">  <!-- Optional CSS -->
+    <link rel="stylesheet" type="text/css" href="style.css">  <!-- Corrected CSS path -->
 </head>
 <body>
     <nav>
@@ -48,7 +53,7 @@ def generate_html_file(entry, entries, output_dir):
 </body>
 </html>
 """
-    # Save the HTML file with just the title as the filename
+    # Save the HTML file with the title as the filename
     file_name = f"{title.replace(' ', '_').lower()}.html"
     with open(os.path.join(output_dir, file_name), 'w') as html_file:
         html_file.write(html_content)
