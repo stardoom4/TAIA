@@ -257,7 +257,7 @@ footer>* {
 
         .sidebar ul li a {
             text-decoration: none;
-            color: #333;
+            color: #fff;
         }
 
         #sidebar-toggle {
@@ -269,7 +269,7 @@ footer>* {
             right: 20px;
             bottom: 20px;
             z-index: 999;
-            background-color: #333;
+            background-color: #fff;
             color: white;
             border: none;
             padding: 10px 15px;
