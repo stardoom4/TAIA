@@ -43,11 +43,12 @@ def generate_html_file(entry, entries, output_dir):
     <link rel="stylesheet" type="text/css" href="style.css">  <!-- Corrected CSS path -->
 </head>
 <body>
+<div class="sidebar">
     <nav>
         <ul>
             {generate_master_navigation(entries)}
         </ul>
-    </nav>
+    </nav></div>
     <h1>{title}</h1>
     {description}  <!-- Description can contain HTML tags -->
 </body>
