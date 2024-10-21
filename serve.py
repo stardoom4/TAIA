@@ -35,7 +35,7 @@ def generate_html_file(entry, entries, output_dir):
     html_content = f"""<html>
 <head>
     <title>{title}</title>
-    <link rel="stylesheet" type="text/css" href="styles.css">  <!-- Optional CSS -->
+    <link rel="stylesheet" type="text/css" href="style.css">  <!-- Optional CSS -->
 </head>
 <body>
     <nav>
