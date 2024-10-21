@@ -291,6 +291,10 @@ footer>* {
                 right: 0;
                 top: 0;
             }
+
+            .toggle-btn {
+                display: none;
+            }
         }
 
         @media (max-width: 767px) {
@@ -303,7 +307,7 @@ footer>* {
                 transform: translateX(100%);
             }
 
-            .sidebar.active {
+            #sidebar-toggle:checked ~ .sidebar {
                 transform: translateX(0);
             }
 
