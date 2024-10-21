@@ -1,5 +1,5 @@
 ID: 1
-TITLE: Master Page
+TITLE: index
 AUTHOR: John Doe
 DATE: 2024-10-21
 KEYWORDS: master, overview
@@ -7,7 +7,7 @@ DESCRIPTION: <p>This is the master page. It contains links to subpages.</p>
 
 ID: 2
 TITLE: Subpage1
-UNDER: Master Page
+UNDER: index
 AUTHOR: Jane Smith
 DATE: 2024-10-22
 KEYWORDS: subpage1, detail
@@ -15,7 +15,7 @@ DESCRIPTION: <p>This is the first subpage under the master page.</p>
 
 ID: 3
 TITLE: Subpage2
-UNDER: Master Page
+UNDER: index
 AUTHOR: Jane Smith
 DATE: 2024-10-23
 KEYWORDS: subpage2, detail
