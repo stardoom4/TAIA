@@ -43,6 +43,9 @@ def generate_html_file(entry, entries, output_dir):
     <link rel="stylesheet" type="text/css" href="style.css">  <!-- CSS path -->
 </head>
 <body>
+<input type="checkbox" id="sidebar-toggle">
+    <label for="sidebar-toggle" class="toggle-btn" aria-label="Toggle Sidebar">☰</label>
+
     <nav>
     <div class="sidebar">
         <ul>
