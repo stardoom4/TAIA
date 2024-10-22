@@ -39,6 +39,8 @@ def generate_html_file(entry, entries, output_dir):
     # Generate the navigation menu with dynamic visibility for subpages
     html_content = f"""<html>
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{title}</title>
     <link rel="stylesheet" type="text/css" href="style.css">  <!-- CSS path -->
 </head>
