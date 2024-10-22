@@ -315,3 +315,6 @@ footer>* {
                 display: block;
             }
         }
+.content {
+            padding: 20px;
+}
