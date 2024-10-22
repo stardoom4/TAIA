@@ -48,15 +48,14 @@ def generate_html_file(entry, entries, output_dir):
     <link rel="stylesheet" type="text/css" href="style.css">  <!-- CSS path -->
 </head>
 <body>
-<div id="mySidepanel" class="sidepanel">
-<a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
+<button class="toggle-btn" aria-label="Toggle Sidebar">☰</button>
+<div class="sidebar">
     <nav>
         <ul>
             {generate_master_navigation(entries, entry)}
         </ul>
     </nav>
     </div>
-<button class="openbtn" onclick="openNav()">☰</button>
     <div class="content">
     <h1>{title}</h1>
     {description} </div>
