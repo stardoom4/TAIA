@@ -9,6 +9,9 @@ def generate_html_from_taia(file_path, output_dir):
     if os.path.exists('style.css'):
         shutil.copy('style.css', os.path.join(output_dir, 'style.css'))
 
+    if os.path.exists('script.js'):
+        shutil.copy('script.js', os.path.join(output_dir, 'script.js'))
+
     # Generate each HTML file based on the entries
     for entry in entries:
         generate_html_file(entry, entries, output_dir)
@@ -57,15 +60,7 @@ def generate_html_file(entry, entries, output_dir):
     <div class="content">
     <h1>{title}</h1>
     {description} </div>
-    <script>
-function openNav() {
-document.getElementById("mySidepanel").style.width = "244px";
-}
-function closeNav() {
-document.getElementById("mySidepanel").style.width = "0";
-}
-</script>
-    <!-- Description can contain HTML tags -->
+    <script src="script.js"></script><!-- Description can contain HTML tags -->
 </body>
 </html>
 """
