@@ -265,11 +265,10 @@ footer>* {
             color: #333;
         }
 
-        .toggle-btn {
-            display: none;
+.toggle-btn {
             position: fixed;
             right: 20px;
-            top: 20px;
+            bottom: 20px;
             z-index: 999;
             background-color: #333;
             color: white;
@@ -277,7 +276,6 @@ footer>* {
             padding: 10px 15px;
             cursor: pointer;
         }
-
         @media (min-width: 768px) {
             .content {
                 margin-right: 250px;
