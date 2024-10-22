@@ -54,8 +54,9 @@ def generate_html_file(entry, entries, output_dir):
         </ul>
     </nav>
     </div>
+    <div class="content">
     <h1>{title}</h1>
-    {description}  <!-- Description can contain HTML tags -->
+    {description} </div> <!-- Description can contain HTML tags -->
 </body>
 </html>
 """
