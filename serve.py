@@ -45,18 +45,27 @@ def generate_html_file(entry, entries, output_dir):
     <link rel="stylesheet" type="text/css" href="style.css">  <!-- CSS path -->
 </head>
 <body>
-<input type="checkbox" id="sidebar-toggle">
-    <label for="sidebar-toggle" class="toggle-btn" aria-label="Toggle Sidebar">☰</label>
+<div id="mySidepanel" class="sidepanel">
+<a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
     <nav>
-    <div class="sidebar">
         <ul>
             {generate_master_navigation(entries, entry)}
         </ul>
     </nav>
     </div>
+<button class="openbtn" onclick="openNav()">☰</button>
     <div class="content">
     <h1>{title}</h1>
-    {description} </div> <!-- Description can contain HTML tags -->
+    {description} </div>
+    <script>
+function openNav() {
+document.getElementById("mySidepanel").style.width = "244px";
+}
+function closeNav() {
+document.getElementById("mySidepanel").style.width = "0";
+}
+</script>
+    <!-- Description can contain HTML tags -->
 </body>
 </html>
 """
