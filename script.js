@@ -1,6 +1,6 @@
-function openNav() {
-document.getElementById("mySidepanel").style.width = "244px";
-}
-function closeNav() {
-document.getElementById("mySidepanel").style.width = "0";
-}
+        const toggleBtn = document.querySelector('.toggle-btn');
+        const sidebar = document.querySelector('.sidebar');
+
+        toggleBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+        });
