@@ -23,6 +23,7 @@ body {
   font-size: 16px;
   background-color: #000;
   height: 100%;
+  margin-left: -30px;
 }
 
 body>* {
@@ -97,20 +98,19 @@ main figure figcaption {
   max-width: 400px;
 }
 
-main h1 {
- font-family: 'Tolkien', sans-serif;
- color: var(--f_high);
+h1 {
+ font-family: sans-serif;
+ color: #fff;
  max-width: 400px;
 }
-
-main h2 {
-  font-family: 'Tolkien', sans-serif;
+h2 {
+  font-family: sans-serif;
   max-width: 400px;
   font-style: italic;
   color: #fff;
 }
 
-main h4 {
+h4 {
   font-style: italic;
   font-weight: normal;
   line-height: 24px;
@@ -118,38 +118,38 @@ main h4 {
   max-width: 400px;
 }
 
-main ul,
-main ol {
+ul,
+ol {
   margin: 0 30px 30px 30px;
 }
 
-main ul ul {
+ul ul {
   margin-bottom: 0;
 }
 
-main p {
+p {
   line-height: 160%;
 }
 
-main a {
+a {
   text-decoration: underline;
 }
 
-main a:hover,
+a:hover,
 ::selection {
   background-color: var(--b_high);
   color:var(--f_high);
   text-decoration: none;
 }
 
-main a strong:hover,
+a strong:hover,
 ::selection {
   background-color: #fff !important;
   color: #000 !important;
   text-decoration: none;
 }
 
-main q {
+q {
   font-family: serif;
   font-size: 18px;
   font-style: italic;
@@ -157,14 +157,14 @@ main q {
   max-width: 400px;
 }
 
-main img,
-main svg {
+img,
+svg {
   max-width: 100%;
   display: inline-block;
   margin: 0 0 25px;
 }
 
-main pre {
+pre {
   overflow: auto;
   background: #000 !important;
   padding: 10px;
@@ -173,15 +173,15 @@ main pre {
   max-height: 700px;
 }
 
-main code {
+code {
   white-space: pre;
 }
 
-main article {
+article {
   font-family: monospace;
 }
 
-main hr {
+hr {
   margin-top: 10px;
   margin-bottom: 10px;
 }
@@ -299,6 +299,7 @@ footer>* {
                 height: 100vh;
                 width: 250px;
                 transform: translateX(100%);
+                border: 1px solid #cd5700;
             }
 
             .sidebar.active {
@@ -311,11 +312,15 @@ footer>* {
         }
 
 #searchInput {
-    width: 100%;
-    padding: 8px;
-    margin-top: 20px;
-    margin-bottom: 10px;
+    width: 140px;
+    padding: 4px;
+    margin-top: 0px;
+    margin-bottom: -16px;
     font-size: 16px;
+    margin-left: 20px;
+    background-color: #cd5700;
+    border: #000 solid 1px;
+    color: #000;
 }
 
 #searchResults {
@@ -324,6 +329,7 @@ footer>* {
 
 .search-result {
     margin-bottom: 15px;
+    margin-left: 20px;
 }
 
 .search-result h3 {
