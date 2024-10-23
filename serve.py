@@ -9,16 +9,19 @@ def generate_html_from_taia(file_path, output_dir):
     # Copy the style.css and script.js files to the output directory
     if os.path.exists('style.css'):
         shutil.copy('style.css', os.path.join(output_dir, 'style.css'))
-
     if os.path.exists('script.js'):
         shutil.copy('script.js', os.path.join(output_dir, 'script.js'))
 
-    # Generate each HTML file based on the entries
+    # Generate each HTML file based on the entries, excluding those tagged as 'mb'
     for entry in entries:
-        generate_html_file(entry, entries, output_dir)
+        if entry.get('TAG') != 'mb':  # Exclude microblog entries from separate page generation
+            generate_html_file(entry, entries, output_dir)
 
-    # Generate the search index JSON file
-    generate_search_index(entries, os.path.join(output_dir, 'search_index.json'))
+    # Generate the search index (JSON format)
+    generate_search_index(entries, output_dir)
+
+    # Generate the microblog page for entries with TAG: mb
+    generate_microblog_page(entries, output_dir)
 
 def read_taia_file(file_path):
     entries = []
@@ -52,9 +55,6 @@ def generate_html_file(entry, entries, output_dir):
     <link rel="stylesheet" type="text/css" href="style.css">  <!-- CSS path -->
 </head>
 <body>
-<a href="#" class="logo">
-        <img src="https://wunder.pages.dev/static/site/Trigon.jpg" alt="Logo">
-    </a>
 <button class="toggle-btn" aria-label="Toggle Sidebar">☰</button>
 <div class="sidebar">
     <nav>
@@ -62,13 +62,11 @@ def generate_html_file(entry, entries, output_dir):
             {generate_master_navigation(entries, entry)}
         </ul>
     </nav>
-</div>
-<input type="text" id="searchInput" placeholder="Search..." />
-<div id="searchResults"></div>
-<div class="content">
+    </div>
+    <div class="content">
     <h1>{title}</h1>
     {description} </div>
-<script src="script.js"></script><!-- Description can contain HTML tags -->
+    <script src="script.js"></script><!-- Description can contain HTML tags -->
 </body>
 </html>
 """
@@ -102,19 +100,70 @@ def generate_master_navigation(entries, current_entry):
     
     return "\n".join(nav_links)
 
-def generate_search_index(entries, output_path):
-    """Generate search_index.json based on the .taia entries."""
-    search_index = []
+def generate_search_index(entries, output_dir):
+    search_data = []
+    
+    # Prepare search data with just title and URL, excluding microblog entries
     for entry in entries:
-        search_index.append({
-            'title': entry.get('TITLE', 'Untitled'),
-            'description': entry.get('DESCRIPTION', 'No content available.'),
-            'url': f"{entry.get('TITLE', 'Untitled').replace(' ', '_').lower()}.html"
-        })
+        if entry.get('TAG') != 'mb':  # Exclude microblog entries from the search index
+            title = entry.get('TITLE', 'Untitled')
+            file_name = f"{title.replace(' ', '_').lower()}.html"
+            search_data.append({
+                'title': title,
+                'url': file_name
+            })
 
-    # Write the search index to a JSON file
-    with open(output_path, 'w') as json_file:
-        json.dump(search_index, json_file, indent=4)
+    # Save the search data as JSON
+    search_file_path = os.path.join(output_dir, 'search_index.json')
+    with open(search_file_path, 'w') as search_file:
+        json.dump(search_data, search_file)
+
+def generate_microblog_page(entries, output_dir):
+    """Generate a microblog page for entries tagged with 'TAG: mb'."""
+    microblog_entries = [entry for entry in entries if entry.get('TAG') == 'mb']
+
+    # Sort the microblog entries in reverse order (newest first)
+    microblog_entries = sorted(microblog_entries, key=lambda e: e.get('DATE', '9999-99-99'), reverse=True)
+
+    # Start the HTML content for the microblog feed
+    html_content = """<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Microblog</title>
+    <link rel="stylesheet" type="text/css" href="style.css">  <!-- CSS path -->
+</head>
+<body>
+<div class="content">
+    <h1>Microblog Feed</h1>
+    <div class="microblog-feed">
+"""
+
+    # Add each microblog entry to the feed
+    for entry in microblog_entries:
+        title = entry.get('TITLE', 'Untitled')
+        description = entry.get('DESCRIPTION', '')
+        date = entry.get('DATE', 'Unknown date')
+
+        html_content += f"""
+        <div class="microblog-entry">
+            <h3>{title} <small>({date})</small></h3>
+            <p>{description}</p>
+        </div>
+        <hr>
+        """
+
+    # Close the HTML content
+    html_content += """
+    </div>
+</div>
+</body>
+</html>
+"""
+
+    # Save the microblog HTML page
+    with open(os.path.join(output_dir, 'microblog.html'), 'w') as microblog_file:
+        microblog_file.write(html_content)
 
 # Example usage
 generate_html_from_taia('elements.taia', 'output_pages')
