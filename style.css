@@ -305,7 +305,7 @@ footer>* {
         }
 
 #searchInput {
-    width: 140px;
+    width: 120px;
     padding: 4px;
     margin-top: 0px;
     margin-bottom: -16px;
@@ -349,6 +349,6 @@ footer>* {
 
         .logo img {
             max-width: 60px;
-            height: 60px;
-            width: 60px;
+            height: 40px;
+            width: 40px;
         }
