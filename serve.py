@@ -52,6 +52,9 @@ def generate_html_file(entry, entries, output_dir):
     <link rel="stylesheet" type="text/css" href="style.css">  <!-- CSS path -->
 </head>
 <body>
+<a href="#" class="logo">
+        <img src="https://wunder.pages.dev/static/site/Trigon.jpg" alt="Logo">
+    </a>
 <button class="toggle-btn" aria-label="Toggle Sidebar">☰</button>
 <div class="sidebar">
     <nav>
