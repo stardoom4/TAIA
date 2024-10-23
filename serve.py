@@ -108,7 +108,6 @@ def generate_search_index(entries, output_path):
     for entry in entries:
         search_index.append({
             'title': entry.get('TITLE', 'Untitled'),
-            'description': entry.get('DESCRIPTION', 'No content available.'),
             'url': f"{entry.get('TITLE', 'Untitled').replace(' ', '_').lower()}.html"
         })
 
