@@ -28,8 +28,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (query.length > 1) {  // Start searching after two characters
             const results = searchIndex.filter(page => 
-                page.title.toLowerCase().includes(query) || 
-                page.description.toLowerCase().includes(query)
+                page.title.toLowerCase().includes(query)  // Only search in the title
             );
 
             results.forEach(result => {
@@ -37,7 +36,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 resultItem.classList.add('search-result');
                 resultItem.innerHTML = `
                     <h3><a href="${result.url}">${result.title}</a></h3>
-                    <p>${result.description}</p>
                 `;
                 searchResults.appendChild(resultItem);
             });
