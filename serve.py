@@ -51,6 +51,8 @@ def generate_html_file(entry, entries, output_dir):
     <link rel="stylesheet" type="text/css" href="style.css">  <!-- CSS path -->
 </head>
 <body>
+<input type="text" id="searchInput" placeholder="Search..." onkeyup="searchPages()">
+<ul id="searchResults"></ul>
 <button class="toggle-btn" aria-label="Toggle Sidebar">☰</button>
 <div class="sidebar">
     <nav>
