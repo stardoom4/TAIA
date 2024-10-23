@@ -1,11 +1,12 @@
 import os
 import shutil
+import json
 
 def generate_html_from_taia(file_path, output_dir):
     os.makedirs(output_dir, exist_ok=True)  # Create output directory if it doesn't exist
     entries = read_taia_file(file_path)
 
-    # Copy the style.css file to the output directory
+    # Copy the style.css and script.js files to the output directory
     if os.path.exists('style.css'):
         shutil.copy('style.css', os.path.join(output_dir, 'style.css'))
 
@@ -15,6 +16,9 @@ def generate_html_from_taia(file_path, output_dir):
     # Generate each HTML file based on the entries
     for entry in entries:
         generate_html_file(entry, entries, output_dir)
+
+    # Generate the search index JSON file
+    generate_search_index(entries, os.path.join(output_dir, 'search_index.json'))
 
 def read_taia_file(file_path):
     entries = []
@@ -48,6 +52,9 @@ def generate_html_file(entry, entries, output_dir):
     <link rel="stylesheet" type="text/css" href="style.css">  <!-- CSS path -->
 </head>
 <body>
+<a href="#" class="logo">
+        <img src="https://wunder.pages.dev/static/site/Trigon.jpg" alt="Logo">
+    </a>
 <button class="toggle-btn" aria-label="Toggle Sidebar">☰</button>
 <div class="sidebar">
     <nav>
@@ -55,11 +62,13 @@ def generate_html_file(entry, entries, output_dir):
             {generate_master_navigation(entries, entry)}
         </ul>
     </nav>
-    </div>
-    <div class="content">
+</div>
+<input type="text" id="searchInput" placeholder="Search..." />
+<div id="searchResults"></div>
+<div class="content">
     <h1>{title}</h1>
     {description} </div>
-    <script src="script.js"></script><!-- Description can contain HTML tags -->
+<script src="script.js"></script><!-- Description can contain HTML tags -->
 </body>
 </html>
 """
@@ -92,6 +101,20 @@ def generate_master_navigation(entries, current_entry):
                 nav_links.append('<ul>' + ''.join(sub_nav_links) + '</ul>')
     
     return "\n".join(nav_links)
+
+def generate_search_index(entries, output_path):
+    """Generate search_index.json based on the .taia entries."""
+    search_index = []
+    for entry in entries:
+        search_index.append({
+            'title': entry.get('TITLE', 'Untitled'),
+            'description': entry.get('DESCRIPTION', 'No content available.'),
+            'url': f"{entry.get('TITLE', 'Untitled').replace(' ', '_').lower()}.html"
+        })
+
+    # Write the search index to a JSON file
+    with open(output_path, 'w') as json_file:
+        json.dump(search_index, json_file, indent=4)
 
 # Example usage
 generate_html_from_taia('elements.taia', 'output_pages')
