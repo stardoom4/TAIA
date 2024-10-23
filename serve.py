@@ -1,27 +1,25 @@
 import os
 import shutil
-import json
 
 def generate_html_from_taia(file_path, output_dir):
     os.makedirs(output_dir, exist_ok=True)  # Create output directory if it doesn't exist
     entries = read_taia_file(file_path)
 
-    # Copy the style.css and script.js files to the output directory
+    # Copy the style.css file to the output directory
     if os.path.exists('style.css'):
         shutil.copy('style.css', os.path.join(output_dir, 'style.css'))
+
     if os.path.exists('script.js'):
         shutil.copy('script.js', os.path.join(output_dir, 'script.js'))
 
-    # Generate each HTML file based on the entries, excluding those tagged as 'mb'
+    # Generate each HTML file based on the entries
     for entry in entries:
-        if entry.get('TAG') != 'mb':  # Exclude microblog entries from separate page generation
+        if entry.get('TAG') != 'mb':  # Don't generate separate pages for microblog entries
             generate_html_file(entry, entries, output_dir)
 
-    # Generate the search index (JSON format)
-    generate_search_index(entries, output_dir)
-
-    # Generate the microblog page for entries with TAG: mb
+    # Generate the microblog page
     generate_microblog_page(entries, output_dir)
+
 
 def read_taia_file(file_path):
     entries = []
@@ -40,6 +38,7 @@ def read_taia_file(file_path):
         if entry:
             entries.append(entry)
     return entries
+
 
 def generate_html_file(entry, entries, output_dir):
     title = entry.get('TITLE', 'Untitled')
@@ -65,7 +64,8 @@ def generate_html_file(entry, entries, output_dir):
     </div>
     <div class="content">
     <h1>{title}</h1>
-    {description} </div>
+    {description}
+    </div>
     <script src="script.js"></script><!-- Description can contain HTML tags -->
 </body>
 </html>
@@ -75,11 +75,55 @@ def generate_html_file(entry, entries, output_dir):
     with open(os.path.join(output_dir, file_name), 'w') as html_file:
         html_file.write(html_content)
 
+
+def generate_microblog_page(entries, output_dir):
+    microblog_entries = [entry for entry in entries if entry.get('TAG') == 'mb']
+
+    if microblog_entries:
+        html_content = f"""<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Microblog</title>
+    <link rel="stylesheet" type="text/css" href="style.css">  <!-- CSS path -->
+</head>
+<body>
+<div class="content">
+    <h1>Microblog</h1>
+    <div class="microblog-feed">
+        {generate_microblog_feed(microblog_entries)}
+    </div>
+</body>
+</html>
+"""
+
+        # Save the microblog page as microblog.html
+        file_name = "microblog.html"
+        with open(os.path.join(output_dir, file_name), 'w') as html_file:
+            html_file.write(html_content)
+
+
+def generate_microblog_feed(entries):
+    feed_content = ''
+    for entry in entries:
+        title = entry.get('TITLE', 'Untitled')
+        description = entry.get('DESCRIPTION', 'No content available.')
+
+        feed_content += f"""<div class="microblog-entry">
+        <h3>{title}</h3>
+        <p>{description}</p>
+        </div>
+        <hr>
+        """
+
+    return feed_content
+
+
 def generate_master_navigation(entries, current_entry):
     nav_links = []
     
-    # Get the master pages
-    master_pages = [entry for entry in entries if 'UNDER' not in entry]
+    # Get the master pages (exclude entries with TAG: mb)
+    master_pages = [entry for entry in entries if 'UNDER' not in entry and entry.get('TAG') != 'mb']
     
     for master_entry in master_pages:
         master_title = master_entry['TITLE']
@@ -92,7 +136,7 @@ def generate_master_navigation(entries, current_entry):
         if master_entry == current_entry:  # Check if we are on a master page
             sub_nav_links = [
                 f'<li style="margin-left:20px;"><a href="{entry["TITLE"].replace(" ", "_").lower()}.html">{entry["TITLE"]}</a></li>'
-                for entry in entries if entry.get('UNDER') == master_title
+                for entry in entries if entry.get('UNDER') == master_title and entry.get('TAG') != 'mb'
             ]
             
             if sub_nav_links:
@@ -100,70 +144,6 @@ def generate_master_navigation(entries, current_entry):
     
     return "\n".join(nav_links)
 
-def generate_search_index(entries, output_dir):
-    search_data = []
-    
-    # Prepare search data with just title and URL, excluding microblog entries
-    for entry in entries:
-        if entry.get('TAG') != 'mb':  # Exclude microblog entries from the search index
-            title = entry.get('TITLE', 'Untitled')
-            file_name = f"{title.replace(' ', '_').lower()}.html"
-            search_data.append({
-                'title': title,
-                'url': file_name
-            })
-
-    # Save the search data as JSON
-    search_file_path = os.path.join(output_dir, 'search_index.json')
-    with open(search_file_path, 'w') as search_file:
-        json.dump(search_data, search_file)
-
-def generate_microblog_page(entries, output_dir):
-    """Generate a microblog page for entries tagged with 'TAG: mb'."""
-    microblog_entries = [entry for entry in entries if entry.get('TAG') == 'mb']
-
-    # Sort the microblog entries in reverse order (newest first)
-    microblog_entries = sorted(microblog_entries, key=lambda e: e.get('DATE', '9999-99-99'), reverse=True)
-
-    # Start the HTML content for the microblog feed
-    html_content = """<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Microblog</title>
-    <link rel="stylesheet" type="text/css" href="style.css">  <!-- CSS path -->
-</head>
-<body>
-<div class="content">
-    <h1>Microblog Feed</h1>
-    <div class="microblog-feed">
-"""
-
-    # Add each microblog entry to the feed
-    for entry in microblog_entries:
-        title = entry.get('TITLE', 'Untitled')
-        description = entry.get('DESCRIPTION', '')
-        date = entry.get('DATE', 'Unknown date')
-
-        html_content += f"""
-        <div class="microblog-entry">
-            <h3>{title} <small>({date})</small></h3>
-            <p>{description}</p>
-        </div>
-        <hr>
-        """
-
-    # Close the HTML content
-    html_content += """
-    </div>
-</div>
-</body>
-</html>
-"""
-
-    # Save the microblog HTML page
-    with open(os.path.join(output_dir, 'microblog.html'), 'w') as microblog_file:
-        microblog_file.write(html_content)
 
 # Example usage
 generate_html_from_taia('elements.taia', 'output_pages')
