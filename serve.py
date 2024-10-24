@@ -17,11 +17,18 @@ def generate_html_from_taia(file_path, output_dir, microblog_file):
         if entry.get('TAG') != 'mb':
             generate_html_file(entry, entries, output_dir)
 
-    # Generate the microblog page
+    # Generate the microblog page with pagination
     generate_microblog_page(microblog_entries, entries, output_dir)
 
     # Generate search index file
     generate_search_index(entries, microblog_entries, output_dir)
+
+    # Copy the first microblog page to index.html
+    index_path = os.path.join(output_dir, 'index.html')
+    first_microblog_page_path = os.path.join(output_dir, 'microblog_page_1.html')
+    
+    if os.path.exists(first_microblog_page_path):
+        shutil.copy(first_microblog_page_path, index_path)
 
 
 def read_taia_file(file_path):
