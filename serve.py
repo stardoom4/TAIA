@@ -105,7 +105,6 @@ def generate_microblog_page(entries, output_dir):
 <div class="sidebar">
     <nav>
         <ul>
-            {generate_master_navigation(entries, None)}
             {generate_master_navigation(entries, entry)}
         </ul>
     </nav>
