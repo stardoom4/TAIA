@@ -19,7 +19,7 @@ def generate_html_from_taia(elements_file_path, microblog_file_path, output_dir)
         generate_html_file(entry, entries, output_dir)
 
     # Generate the microblog page (now as index.html)
-    generate_microblog_page(microblog_entries, output_dir)
+    generate_microblog_page(microblog_entries, entries, output_dir)
 
     # Generate the search index JSON file
     generate_search_index(entries, output_dir)
@@ -58,10 +58,6 @@ def generate_html_file(entry, entries, output_dir):
     <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
-<div class="search">
-    <input type="text" id="searchInput" placeholder="Search...">
-    <div id="searchResults"></div>
-</div>
 <button class="toggle-btn" aria-label="Toggle Sidebar">☰</button>
 <div class="sidebar">
     <nav>
@@ -84,9 +80,9 @@ def generate_html_file(entry, entries, output_dir):
         html_file.write(html_content)
 
 
-def generate_microblog_page(entries, output_dir):
+def generate_microblog_page(microblog_entries, all_entries, output_dir):
     posts_per_page = 16
-    total_pages = (len(entries) + posts_per_page - 1) // posts_per_page  # Ceiling division
+    total_pages = (len(microblog_entries) + posts_per_page - 1) // posts_per_page  # Ceiling division
 
     for page_num in range(1, total_pages + 1):
         html_content = f"""<html>
@@ -97,26 +93,26 @@ def generate_microblog_page(entries, output_dir):
 <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
-<div class="search">
-    <input type="text" id="searchInput" placeholder="Search...">
-    <div id="searchResults"></div>
-</div>
 <button class="toggle-btn" aria-label="Toggle Sidebar">☰</button>
 <div class="sidebar">
     <nav>
         <ul>
-            {generate_master_navigation(entries, entry)}
+            {generate_master_navigation(all_entries, None)}
         </ul>
     </nav>
 </div>
 <div class="content">
     <h1>Microblog - Page {page_num}</h1>
     <div class="microblog-feed">
-        {generate_microblog_feed(entries, page_num, posts_per_page)}
+        {generate_microblog_feed(microblog_entries, page_num, posts_per_page)}
     </div>
     <div class="pagination">
         {generate_pagination_controls(page_num, total_pages)}
     </div>
+</div>
+<div class="search">
+    <input type="text" id="searchInput" placeholder="Search...">
+    <div id="searchResults"></div>
 </div>
 <script src="script.js"></script>
 </body>
@@ -187,6 +183,15 @@ def generate_master_navigation(entries, current_entry):
         # Add master page link
         nav_links.append(f'<li><a href="{master_file_name}">{master_title}</a></li>')
 
+        # Add subpages for the master page
+        sub_nav_links = [
+            f'<li style="margin-left:20px;"><a href="{entry["TITLE"].replace(" ", "_").lower()}.html">{entry["TITLE"]}</a></li>'
+            for entry in entries if entry.get('UNDER') == master_title and entry.get('TAG') != 'mb'
+        ]
+        
+        if sub_nav_links:
+            nav_links.append('<ul>' + ''.join(sub_nav_links) + '</ul>')
+    
     # Add link to Microblog (which is now the home page, index.html)
     nav_links.append(f'<li><a href="index.html">Microblog</a></li>')
 
