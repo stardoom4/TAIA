@@ -36,14 +36,3 @@ DATE: 2024-10-25
 KEYWORDS: subpage3, detail
 DESCRIPTION: <p>This is a subpage under another master page.</p>
 
-ID: 6
-TITLE: First Microblog Post
-DESCRIPTION: This is the content of the first microblog entry.
-DATE: 2024-10-23
-TAG: mb
-
-ID: 7
-TITLE: Second Microblog Post
-DESCRIPTION: This is another microblog post.
-DATE: 2024-10-22
-TAG: mb
