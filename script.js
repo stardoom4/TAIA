@@ -27,24 +27,12 @@ document.addEventListener("DOMContentLoaded", function () {
         searchResults.innerHTML = '';
 
         if (query.length > 1) {  // Start searching after two characters
-            const results = searchIndex.filter(page => 
-                page.title.toLowerCase().includes(query) || 
-                page.description.toLowerCase().includes(query)
-            );
-
+            const results = searchIndex.filter(entry => entry.title.toLowerCase().includes(query));
             results.forEach(result => {
                 const resultItem = document.createElement('div');
-                resultItem.classList.add('search-result');
-                resultItem.innerHTML = `
-                    <h3><a href="${result.url}">${result.title}</a></h3>
-                    <p>${result.description}</p>
-                `;
+                resultItem.innerHTML = `<a href="${result.url}">${result.title}</a>`;
                 searchResults.appendChild(resultItem);
             });
-
-            if (results.length === 0) {
-                searchResults.innerHTML = '<p>No results found.</p>';
-            }
         }
     });
 });
