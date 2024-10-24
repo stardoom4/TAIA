@@ -1,14 +1,15 @@
 import os
 import shutil
+import json
 
-def generate_html_from_taia(file_path, output_dir):
+def generate_html_from_taia(elements_file, microblog_file, output_dir):
     os.makedirs(output_dir, exist_ok=True)  # Create output directory if it doesn't exist
-    entries = read_taia_file(file_path)
+    entries = read_taia_file(elements_file)
+    microblog_entries = read_taia_file(microblog_file)
 
-    # Copy the style.css file to the output directory
+    # Copy the style.css and script.js file to the output directory
     if os.path.exists('style.css'):
         shutil.copy('style.css', os.path.join(output_dir, 'style.css'))
-
     if os.path.exists('script.js'):
         shutil.copy('script.js', os.path.join(output_dir, 'script.js'))
 
@@ -18,7 +19,10 @@ def generate_html_from_taia(file_path, output_dir):
             generate_html_file(entry, entries, output_dir)
 
     # Generate the microblog page
-    generate_microblog_page(entries, output_dir)
+    generate_microblog_page(microblog_entries, output_dir)
+
+    # Generate the search index JSON file
+    generate_search_index(entries + microblog_entries, output_dir)
 
 
 def read_taia_file(file_path):
@@ -76,9 +80,7 @@ def generate_html_file(entry, entries, output_dir):
         html_file.write(html_content)
 
 
-def generate_microblog_page(entries, output_dir):
-    microblog_entries = [entry for entry in entries if entry.get('TAG') == 'mb']
-
+def generate_microblog_page(microblog_entries, output_dir):
     if microblog_entries:
         html_content = f"""<html>
 <head>
@@ -145,5 +147,22 @@ def generate_master_navigation(entries, current_entry):
     return "\n".join(nav_links)
 
 
+def generate_search_index(entries, output_dir):
+    search_index = []
+    for entry in entries:
+        title = entry.get('TITLE', 'Untitled')
+        description = entry.get('DESCRIPTION', '')
+        url = f"{title.replace(' ', '_').lower()}.html" if entry.get('TAG') != 'mb' else "microblog.html"
+
+        search_index.append({
+            'title': title,
+            'url': url
+        })
+
+    # Write the search index to a JSON file
+    with open(os.path.join(output_dir, 'search_index.json'), 'w') as json_file:
+        json.dump(search_index, json_file, indent=4)
+
+
 # Example usage
-generate_html_from_taia('elements.taia', 'output_pages')
+generate_html_from_taia('elements.taia', 'microblog.taia', 'output_pages')
