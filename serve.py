@@ -2,27 +2,26 @@ import os
 import shutil
 import json
 
-def generate_html_from_taia(elements_file_path, microblog_file_path, output_dir):
+def generate_html_from_taia(file_path, output_dir, microblog_file):
     os.makedirs(output_dir, exist_ok=True)  # Create output directory if it doesn't exist
-    entries = read_taia_file(elements_file_path)
-    microblog_entries = read_taia_file(microblog_file_path)
+    entries = read_taia_file(file_path)
+    microblog_entries = read_taia_file(microblog_file)
 
-    # Copy the style.css and script.js files to the output directory
-    if os.path.exists('style.css'):
-        shutil.copy('style.css', os.path.join(output_dir, 'style.css'))
+    # Copy the style.css and script.js file to the output directory
+    for file_name in ['style.css', 'script.js']:
+        if os.path.exists(file_name):
+            shutil.copy(file_name, os.path.join(output_dir, file_name))
 
-    if os.path.exists('script.js'):
-        shutil.copy('script.js', os.path.join(output_dir, 'script.js'))
-
-    # Generate each HTML file based on the entries (excluding microblog entries for separate generation)
+    # Generate HTML for each entry except for microblog
     for entry in entries:
-        generate_html_file(entry, entries, output_dir)
+        if entry.get('TAG') != 'mb':
+            generate_html_file(entry, entries, output_dir)
 
-    # Generate the microblog page (now as index.html)
+    # Generate the microblog page
     generate_microblog_page(microblog_entries, entries, output_dir)
 
-    # Generate the search index JSON file
-    generate_search_index(entries, output_dir)
+    # Generate search index file
+    generate_search_index(entries, microblog_entries, output_dir)
 
 
 def read_taia_file(file_path):
@@ -35,11 +34,10 @@ def read_taia_file(file_path):
                 key, value = line.split(': ', 1)
                 entry[key] = value
             else:  # Blank line indicates end of an entry
-                if entry:  # If there is an entry to add
+                if entry:
                     entries.append(entry)  # Append entry to list
                     entry = {}  # Reset for next entry
-        # Handle the last entry if there is no trailing blank line
-        if entry:
+        if entry:  # Handle last entry if no trailing blank line
             entries.append(entry)
     return entries
 
@@ -48,13 +46,13 @@ def generate_html_file(entry, entries, output_dir):
     title = entry.get('TITLE', 'Untitled')
     description = entry.get('DESCRIPTION', 'No content available.')
 
-    # Generate the navigation menu
+    # Generate the navigation menu with dynamic visibility for second master and subpages
     html_content = f"""<html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{title}</title>
-    <link rel="stylesheet" type="text/css" href="style.css">
+<title>{title}</title>
+<link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
 <button class="toggle-btn" aria-label="Toggle Sidebar">☰</button>
@@ -79,11 +77,47 @@ def generate_html_file(entry, entries, output_dir):
         html_file.write(html_content)
 
 
-def generate_microblog_page(microblog_entries, all_entries, output_dir):
-    posts_per_page = 16
-    total_pages = (len(microblog_entries) + posts_per_page - 1) // posts_per_page  # Ceiling division
+def generate_master_navigation(entries, current_entry):
+    nav_links = []
 
-    for page_num in range(1, total_pages + 1):
+    # Get all master pages (excluding microblog pages)
+    master_pages = [entry for entry in entries if 'UNDER' not in entry and entry.get('TAG') != 'mb']
+
+    for master_entry in master_pages:
+        master_title = master_entry['TITLE']
+        master_file_name = f"{master_title.replace(' ', '_').lower()}.html"
+        nav_links.append(f'<li><a href="{master_file_name}">{master_title}</a></li>')
+
+        # Show second master and subpages only when the user is on the master page
+        if master_entry == current_entry:
+            second_master_pages = [entry for entry in entries if entry.get('UNDER') == master_title]
+            
+            for second_master in second_master_pages:
+                second_master_title = second_master['TITLE']
+                second_master_file_name = f"{second_master_title.replace(' ', '_').lower()}.html"
+                nav_links.append(f'<li style="margin-left:20px;"><a href="{second_master_file_name}">{second_master_title}</a></li>')
+
+                sub_pages = [entry for entry in entries if entry.get('UNDER') == second_master_title]
+                
+                if sub_pages:
+                    sub_nav_links = [
+                        f'<li style="margin-left:40px;"><a href="{entry["TITLE"].replace(" ", "_").lower()}.html">{entry["TITLE"]}</a></li>'
+                        for entry in sub_pages
+                    ]
+                    nav_links.append('<ul>' + ''.join(sub_nav_links) + '</ul>')
+    
+    return "\n".join(nav_links)
+
+
+def generate_microblog_page(microblog_entries, entries, output_dir):
+    pagination_size = 16  # Show 16 posts per page
+    num_pages = (len(microblog_entries) + pagination_size - 1) // pagination_size  # Calculate total pages
+
+    for page_num in range(1, num_pages + 1):
+        start_idx = (page_num - 1) * pagination_size
+        end_idx = start_idx + pagination_size
+        page_entries = microblog_entries[start_idx:end_idx]
+
         html_content = f"""<html>
 <head>
 <meta charset="UTF-8">
@@ -96,41 +130,30 @@ def generate_microblog_page(microblog_entries, all_entries, output_dir):
 <div class="sidebar">
     <nav>
         <ul>
-            {generate_master_navigation(all_entries, None)}
+            {generate_master_navigation(entries, None)}  <!-- Include all master pages -->
         </ul>
     </nav>
 </div>
 <div class="content">
     <h1>Microblog - Page {page_num}</h1>
     <div class="microblog-feed">
-        {generate_microblog_feed(microblog_entries, page_num, posts_per_page)}
+        {generate_microblog_feed(page_entries)}
     </div>
-    <div class="pagination">
-        {generate_pagination_controls(page_num, total_pages)}
-    </div>
-</div>
-<div class="search">
-    <input type="text" id="searchInput" placeholder="Search...">
-    <div id="searchResults"></div>
+    {generate_pagination(page_num, num_pages)}
 </div>
 <script src="script.js"></script>
 </body>
 </html>
 """
-
-        # Save the first page as index.html (the homepage)
-        file_name = "index.html" if page_num == 1 else f"microblog_page_{page_num}.html"
+        # Save the microblog page with pagination
+        file_name = f"microblog_page_{page_num}.html"
         with open(os.path.join(output_dir, file_name), 'w') as html_file:
             html_file.write(html_content)
 
 
-def generate_microblog_feed(entries, page_num, posts_per_page):
+def generate_microblog_feed(entries):
     feed_content = ''
-    start_index = (page_num - 1) * posts_per_page
-    end_index = start_index + posts_per_page
-    paginated_entries = entries[start_index:end_index]
-
-    for entry in paginated_entries:
+    for entry in entries:
         title = entry.get('TITLE', 'Untitled')
         description = entry.get('DESCRIPTION', 'No content available.')
 
@@ -144,86 +167,39 @@ def generate_microblog_feed(entries, page_num, posts_per_page):
     return feed_content
 
 
-def generate_pagination_controls(current_page, total_pages):
-    pagination_html = '<div class="pagination-controls">'
+def generate_pagination(current_page, total_pages):
+    pagination_html = '<div class="pagination">'
 
-    # Previous button
     if current_page > 1:
-        prev_page = "index.html" if current_page - 1 == 1 else f"microblog_page_{current_page - 1}.html"
-        pagination_html += f'<a href="{prev_page}">Previous</a> '
+        pagination_html += f'<a href="microblog_page_{current_page - 1}.html">&laquo; Previous</a>'
 
-    # Page numbers
     for page in range(1, total_pages + 1):
         if page == current_page:
-            pagination_html += f'<span class="current-page">{page}</span> '
+            pagination_html += f'<span class="current-page">{page}</span>'
         else:
-            page_link = "index.html" if page == 1 else f"microblog_page_{page}.html"
-            pagination_html += f'<a href="{page_link}">{page}</a> '
+            pagination_html += f'<a href="microblog_page_{page}.html">{page}</a>'
 
-    # Next button
     if current_page < total_pages:
-        next_page = f"microblog_page_{current_page + 1}.html"
-        pagination_html += f'<a href="{next_page}">Next</a>'
+        pagination_html += f'<a href="microblog_page_{current_page + 1}.html">Next &raquo;</a>'
 
     pagination_html += '</div>'
     return pagination_html
 
 
-def generate_master_navigation(entries, current_entry):
-    nav_links = []
-    
-    # Get the master pages (excluding microblog TAG entries)
-    master_pages = [entry for entry in entries if 'UNDER' not in entry and entry.get('TAG') != 'mb']
-    
-    for master_entry in master_pages:
-        master_title = master_entry['TITLE']
-        master_file_name = f"{master_title.replace(' ', '_').lower()}.html"
-
-        # Add master page link
-        nav_links.append(f'<li><a href="{master_file_name}">{master_title}</a></li>')
-
-        # Get second-level master pages
-        second_master_pages = [
-            entry for entry in entries if entry.get('UNDER') == master_title and entry.get('TAG') != 'mb'
-        ]
-        
-        if second_master_pages:
-            second_nav_links = []
-            for second_entry in second_master_pages:
-                second_title = second_entry['TITLE']
-                second_file_name = f"{second_title.replace(' ', '_').lower()}.html"
-                second_nav_links.append(f'<li style="margin-left:20px;"><a href="{second_file_name}">{second_title}</a></li>')
-
-                # Add subpages for the second-level master page
-                sub_nav_links = [
-                    f'<li style="margin-left:40px;"><a href="{entry["TITLE"].replace(" ", "_").lower()}.html">{entry["TITLE"]}</a></li>'
-                    for entry in entries if entry.get('UNDER') == second_title and entry.get('TAG') != 'mb'
-                ]
-                
-                if sub_nav_links:
-                    second_nav_links.append('<ul>' + ''.join(sub_nav_links) + '</ul>')
-            
-            nav_links.append('<ul>' + ''.join(second_nav_links) + '</ul>')
-    
-    # Add link to Microblog (which is now the home page, index.html)
-    nav_links.append(f'<li><a href="index.html">Microblog</a></li>')
-
-    return "\n".join(nav_links)
-
-
-def generate_search_index(entries, output_dir):
+def generate_search_index(entries, microblog_entries, output_dir):
+    # Prepare search index with title and URLs only (no description)
     search_index = []
-    for entry in entries:
-        search_index.append({
-            'title': entry.get('TITLE', 'Untitled'),
-            'url': f"{entry.get('TITLE', 'Untitled').replace(' ', '_').lower()}.html"
-        })
 
-    # Save the search index as a JSON file
-    search_index_path = os.path.join(output_dir, 'search_index.json')
-    with open(search_index_path, 'w') as json_file:
-        json.dump(search_index, json_file, indent=4)
+    all_entries = entries + microblog_entries
+    for entry in all_entries:
+        title = entry.get('TITLE', 'Untitled')
+        file_name = f"{title.replace(' ', '_').lower()}.html" if entry.get('TAG') != 'mb' else "microblog.html"
+        search_index.append({'title': title, 'url': file_name})
+
+    # Save the search index as JSON
+    with open(os.path.join(output_dir, 'search_index.json'), 'w') as json_file:
+        json.dump(search_index, json_file, indent=2)
 
 
 # Example usage
-generate_html_from_taia('elements.taia', 'microblog.taia', 'output_pages')
+generate_html_from_taia('elements.taia', 'output_pages', 'microblog.taia')
