@@ -47,9 +47,8 @@ def read_taia_file(file_path):
 def generate_html_file(entry, entries, output_dir):
     title = entry.get('TITLE', 'Untitled')
     description = entry.get('DESCRIPTION', 'No content available.')
-    under = entry.get('UNDER', None)
 
-    # Generate the navigation menu with dynamic visibility for subpages
+    # Generate the navigation menu
     html_content = f"""<html>
 <head>
 <meta charset="UTF-8">
@@ -183,14 +182,28 @@ def generate_master_navigation(entries, current_entry):
         # Add master page link
         nav_links.append(f'<li><a href="{master_file_name}">{master_title}</a></li>')
 
-        # Add subpages for the master page
-        sub_nav_links = [
-            f'<li style="margin-left:20px;"><a href="{entry["TITLE"].replace(" ", "_").lower()}.html">{entry["TITLE"]}</a></li>'
-            for entry in entries if entry.get('UNDER') == master_title and entry.get('TAG') != 'mb'
+        # Get second-level master pages
+        second_master_pages = [
+            entry for entry in entries if entry.get('UNDER') == master_title and entry.get('TAG') != 'mb'
         ]
         
-        if sub_nav_links:
-            nav_links.append('<ul>' + ''.join(sub_nav_links) + '</ul>')
+        if second_master_pages:
+            second_nav_links = []
+            for second_entry in second_master_pages:
+                second_title = second_entry['TITLE']
+                second_file_name = f"{second_title.replace(' ', '_').lower()}.html"
+                second_nav_links.append(f'<li style="margin-left:20px;"><a href="{second_file_name}">{second_title}</a></li>')
+
+                # Add subpages for the second-level master page
+                sub_nav_links = [
+                    f'<li style="margin-left:40px;"><a href="{entry["TITLE"].replace(" ", "_").lower()}.html">{entry["TITLE"]}</a></li>'
+                    for entry in entries if entry.get('UNDER') == second_title and entry.get('TAG') != 'mb'
+                ]
+                
+                if sub_nav_links:
+                    second_nav_links.append('<ul>' + ''.join(sub_nav_links) + '</ul>')
+            
+            nav_links.append('<ul>' + ''.join(second_nav_links) + '</ul>')
     
     # Add link to Microblog (which is now the home page, index.html)
     nav_links.append(f'<li><a href="index.html">Microblog</a></li>')
