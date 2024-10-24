@@ -19,7 +19,7 @@ def generate_html_from_taia(elements_file, microblog_file, output_dir):
             generate_html_file(entry, entries, output_dir)
 
     # Generate the microblog page
-    generate_microblog_page(microblog_entries, output_dir)
+    generate_microblog_page(microblog_entries, entries, output_dir)
 
     # Generate the search index JSON file
     generate_search_index(entries + microblog_entries, output_dir)
@@ -58,8 +58,6 @@ def generate_html_file(entry, entries, output_dir):
     <link rel="stylesheet" type="text/css" href="style.css">  <!-- CSS path -->
 </head>
 <body>
-<input type="text" id="searchInput" placeholder="Search..." onkeyup="searchPages()">
-<ul id="searchResults"></ul>
 <button class="toggle-btn" aria-label="Toggle Sidebar">☰</button>
 <div class="sidebar">
     <nav>
@@ -83,7 +81,7 @@ def generate_html_file(entry, entries, output_dir):
         html_file.write(html_content)
 
 
-def generate_microblog_page(microblog_entries, output_dir):
+def generate_microblog_page(microblog_entries, entries, output_dir):
     if microblog_entries:
         html_content = f"""<html>
 <head>
@@ -93,23 +91,21 @@ def generate_microblog_page(microblog_entries, output_dir):
     <link rel="stylesheet" type="text/css" href="style.css">  <!-- CSS path -->
 </head>
 <body>
-<input type="text" id="searchInput" placeholder="Search..." onkeyup="searchPages()">
-<ul id="searchResults"></ul>
 <button class="toggle-btn" aria-label="Toggle Sidebar">☰</button>
 <div class="sidebar">
     <nav>
-    <a href="microblog.html">Microblog</a>
         <ul>
-            {generate_master_navigation(entries, entry)}
+            {generate_master_navigation(entries, None)}  <!-- Sidebar with main entries -->
         </ul>
     </nav>
-    </div>
+</div>
 <div class="content">
     <h1>Microblog</h1>
     <div class="microblog-feed">
         {generate_microblog_feed(microblog_entries)}
     </div>
-     <script src="script.js"></script>
+</div>
+<script src="script.js"></script>
 </body>
 </html>
 """
