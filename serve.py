@@ -109,6 +109,7 @@ def generate_microblog_page(microblog_entries, output_dir):
     <div class="microblog-feed">
         {generate_microblog_feed(microblog_entries)}
     </div>
+     <script src="script.js"></script>
 </body>
 </html>
 """
