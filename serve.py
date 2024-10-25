@@ -66,6 +66,7 @@ def generate_html_file(entry, entries, output_dir):
 <div class="sidebar">
     <nav>
         <ul>
+            <a href="index.html">Home</a>
             {generate_master_navigation(entries, entry)}
         </ul>
     </nav>
@@ -140,6 +141,7 @@ def generate_microblog_page(microblog_entries, entries, output_dir):
 <div class="sidebar">
     <nav>
         <ul>
+            <a href="index.html>Home</a>
             {generate_master_navigation(entries, None)}  <!-- Include all master pages -->
         </ul>
     </nav>
