@@ -215,20 +215,10 @@ input[type=text] {
   font-color: #000 !important;
 }
 
-footer {
-  border-top: 1.5px solid;
-  padding: 30px 0 0 0;
+.footer {
+  border-top: 1.6px solid #cd5700;
+  padding: 3px 0 0 16px;
   clear: both;
-}
-
-footer img {
-  margin: 0 0 -10px 0;
-  width: 30px;
-}
-
-footer>* {
-  display: inline-block;
-  margin-right: 5px;
 }
         .content {
             padding: 20px;
