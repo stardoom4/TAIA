@@ -75,6 +75,9 @@ def generate_html_file(entry, entries, output_dir):
     {description}
 </div>
 <script src="script.js"></script>
+ <div class="footer">
+<p>TAIA</p>
+      </div>
 </body>
 </html>
 """
@@ -149,6 +152,9 @@ def generate_microblog_page(microblog_entries, entries, output_dir):
     {generate_pagination(page_num, num_pages)}
 </div>
 <script src="script.js"></script>
+ <div class="footer">
+<p>TAIA</p>
+      </div>
 </body>
 </html>
 """
