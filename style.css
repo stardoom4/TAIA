@@ -125,13 +125,14 @@ p {
 }
 
 a {
-  text-decoration: underline;
+  text-decoration: none;
+  color: #cd5700;
 }
 
 a:hover,
 ::selection {
-  background-color: var(--b_high);
-  color:var(--f_high);
+  background-color: #fff;
+  color:#000;
   text-decoration: none;
 }
 
