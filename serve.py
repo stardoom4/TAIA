@@ -140,14 +140,14 @@ def generate_microblog_page(microblog_entries, entries, output_dir):
 <button class="toggle-btn" aria-label="Toggle Sidebar">☰</button>
 <div class="sidebar">
     <nav>
+    <a href="index.html>Home</a>
         <ul>
-            <a href="index.html>Home</a>
             {generate_master_navigation(entries, None)}  <!-- Include all master pages -->
         </ul>
     </nav>
 </div>
 <div class="content">
-    <h1>Microblog - Page {page_num}</h1>
+    <h1>Wunder</h1>
     <div class="microblog-feed">
         {generate_microblog_feed(page_entries)}
     </div>
