@@ -291,16 +291,15 @@ input[type=text] {
     font-size: 14px;
 }
 
-/* Styling for Microblog Posts */
 .microblog-feed {
     display: flex;
     flex-direction: column;
     gap: 1.5em;
+    background-color: #353935;
 }
 
 .microblog-entry {
-    background-color: #121212;
-    padding: 1.5em;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    background-color: #353935;
+    padding: 1em;
 }
+
