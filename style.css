@@ -290,17 +290,3 @@ input[type=text] {
     margin: 0;
     font-size: 14px;
 }
-.microblog-entry {
-    padding: 10px;
-    margin-bottom: 15px;
-    border-bottom: 1px solid #e0e0e0;
-}
-
-.parent-entry {
-    padding: 8px;
-    margin-top: 5px;
-    border-left: 2px solid #c0c0c0;
-    margin-left: 15px;
-    color: #555;
-    font-size: 0.9em;
-}
