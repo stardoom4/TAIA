@@ -17,7 +17,7 @@ def generate_html_from_taia(file_path, output_dir, microblog_file):
         if entry.get('TAG') != 'mb':
             generate_html_file(entry, entries, output_dir)
 
-    # Generate the microblog page with pagination
+    # Generate the microblog page with pagination and reply feature
     generate_microblog_page(microblog_entries, entries, output_dir)
 
     # Generate search index file
@@ -148,7 +148,7 @@ def generate_microblog_page(microblog_entries, entries, output_dir):
 <div class="content">
     <h1><a href="index.html">Wunder</a></h1>
     <div class="microblog-feed">
-        {generate_microblog_feed(page_entries)}
+        {generate_microblog_feed(page_entries, microblog_entries)}
     </div>
     {generate_pagination(page_num, num_pages)}
 </div>
@@ -165,14 +165,24 @@ def generate_microblog_page(microblog_entries, entries, output_dir):
             html_file.write(html_content)
 
 
-def generate_microblog_feed(entries):
+def generate_microblog_feed(entries, all_entries):
     feed_content = ''
     for entry in entries:
         title = entry.get('TITLE', 'Untitled')
         description = entry.get('DESCRIPTION', 'No content available.')
+        sn = entry.get('SN', 'N/A')
+        
+        # Check if the post is a reply
+        reply_to = entry.get('REPLY_TO')
+        if reply_to:
+            parent_entry = next((e for e in all_entries if e.get('SN') == reply_to), None)
+            parent_html = f"<blockquote><p><b>Replying to SN:{reply_to}</b><br>{parent_entry['DESCRIPTION']}</p></blockquote>" if parent_entry else ""
+        else:
+            parent_html = ""
 
         feed_content += f"""<div class="microblog-entry">
-        <h3>{title}</h3>
+        <h3>{title} (SN: {sn})</h3>
+        {parent_html}
         <p>{description}</p>
         </div>
         <hr>
