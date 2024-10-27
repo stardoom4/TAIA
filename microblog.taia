@@ -1,3 +1,17 @@
+SN: 1
+TITLE: Main Post
+DESCRIPTION: This is the first post.
+
+SN: 2
+TITLE: Reply to Post 1
+DESCRIPTION: This post replies to SN:1
+IN_REPLY_TO: 1
+
+SN: 3
+TITLE: Another Reply
+DESCRIPTION: This post replies to SN:2
+IN_REPLY_TO: 2
+
 ID: 1
 TITLE: First Microblog Post
 DESCRIPTION: <p>This is the content of the first microblog entry.<img src="https://wallpaperaccess.com/full/4626967.jpg"></p>
