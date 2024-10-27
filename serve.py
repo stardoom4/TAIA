@@ -62,7 +62,8 @@ def generate_html_file(entry, entries, output_dir):
 <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
-<button class="toggle-btn" aria-label="Toggle Sidebar">☰</button>
+<input type="text" id="searchInput" placeholder="Search..." onkeyup="searchPages()">
+<ul id="searchResults"></ul><button class="toggle-btn" aria-label="Toggle Sidebar">☰</button>
 <div class="sidebar">
     <nav>
         <ul>
@@ -137,7 +138,8 @@ def generate_microblog_page(microblog_entries, entries, output_dir):
 <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
-<button class="toggle-btn" aria-label="Toggle Sidebar">☰</button>
+<input type="text" id="searchInput" placeholder="Search..." onkeyup="searchPages()">
+<ul id="searchResults"></ul><button class="toggle-btn" aria-label="Toggle Sidebar">☰</button>
 <div class="sidebar">
     <nav>
         <ul>
