@@ -299,43 +299,8 @@ input[type=text] {
 }
 
 .microblog-entry {
-    background-color: #fff;
+    background-color: #121212;
     padding: 1.5em;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    transition: transform 0.3s ease;
-}
-
-.microblog-entry:hover {
-    transform: translateY(-5px); /* Slight hover effect */
-}
-
-.microblog-entry h3 {
-    font-size: 1.4em;
-    font-weight: 500;
-    color: #444;
-    margin-top: 0;
-}
-
-.microblog-entry p {
-    font-size: 1em;
-    line-height: 1.6;
-    color: #555;
-    margin: 0.5em 0;
-}
-
-/* Date styling */
-.microblog-entry .date {
-    font-size: 0.9em;
-    color: #888;
-    font-style: italic;
-    margin-bottom: 0.5em;
-}
-
-/* Divider for visual clarity */
-.microblog-feed hr {
-    border: 0;
-    height: 1px;
-    background: #eaeaea;
-    margin: 1.5em 0;
 }
