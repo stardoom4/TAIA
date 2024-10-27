@@ -148,7 +148,7 @@ def generate_microblog_page(microblog_entries, entries, output_dir):
 <div class="content">
     <h1><a href="index.html">Wunder</a></h1>
     <div class="microblog-feed">
-        {generate_microblog_feed(page_entries, microblog_entries)}
+        {generate_microblog_feed(page_entries)}
     </div>
     {generate_pagination(page_num, num_pages)}
 </div>
@@ -165,43 +165,18 @@ def generate_microblog_page(microblog_entries, entries, output_dir):
             html_file.write(html_content)
 
 
-def generate_microblog_feed(entries, all_entries):
+def generate_microblog_feed(entries):
     feed_content = ''
-    replies_dict = {}
-
-    # First, create a dictionary to map SN to entries for easy reference
-    for entry in all_entries:
-        sn = entry.get('SN')
-        if sn:
-            replies_dict[sn] = entry
-
     for entry in entries:
         title = entry.get('TITLE', 'Untitled')
         description = entry.get('DESCRIPTION', 'No content available.')
-        sn = entry.get('SN', '')
 
         feed_content += f"""<div class="microblog-entry">
-        <h3>{title} (SN: {sn})</h3>
+        <h3>{title}</h3>
         <p>{description}</p>
+        </div>
+        <hr>
         """
-
-        # Check if there are replies to this entry
-        for reply in entries:
-            reply_sn = reply.get('REPLY_TO')
-            if reply_sn == sn:  # If this reply corresponds to the current post
-                reply_title = reply.get('TITLE', 'Untitled Reply')
-                reply_description = reply.get('DESCRIPTION', 'No content available.')
-                feed_content += f"""
-                <div class="reply">
-                    <p><strong>Reply to SN {sn}:</strong></p>
-                    <blockquote>
-                        <h4>{reply_title}</h4>
-                        <p>{reply_description}</p>
-                    </blockquote>
-                </div>
-                """
-
-        feed_content += "</div><hr>"
 
     return feed_content
 
@@ -226,16 +201,19 @@ def generate_pagination(current_page, total_pages):
 
 
 def generate_search_index(entries, microblog_entries, output_dir):
-    search_index = {}
-    for entry in entries + microblog_entries:
+    # Prepare search index with title and URLs only (no description)
+    search_index = []
+
+    all_entries = entries + microblog_entries
+    for entry in all_entries:
         title = entry.get('TITLE', 'Untitled')
-        description = entry.get('DESCRIPTION', 'No content available.')
-        sn = entry.get('SN', '')
-        search_index[sn] = {'title': title, 'description': description}
+        file_name = f"{title.replace(' ', '_').lower()}.html" if entry.get('TAG') != 'mb' else "microblog.html"
+        search_index.append({'title': title, 'url': file_name})
 
+    # Save the search index as JSON
     with open(os.path.join(output_dir, 'search_index.json'), 'w') as json_file:
-        json.dump(search_index, json_file, indent=4)
+        json.dump(search_index, json_file, indent=2)
 
 
-# Run the HTML generation process
-generate_html_from_taia('elements.taia', 'output', 'microblog.taia')
+# Example usage
+generate_html_from_taia('elements.taia', 'output_pages', 'microblog.taia')
