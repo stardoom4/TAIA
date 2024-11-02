@@ -47,6 +47,20 @@
       a {
         color: #fff;
       }
+        
+.center-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%; /* Full width of the viewport */
+  height: 100vh; /* Full height of the viewport */
+  overflow: hidden; /* Prevents any overflow from larger images */
+}
+
+.responsive-img {
+  max-width: 100%; /* Makes the image responsive */
+  height: auto; /* Keeps the image aspect ratio */
+}
     </style>
 </head>
 <body>
@@ -54,7 +68,9 @@
     </header>
 
     <main>
-
+  <div class="center-container">
+    <img src="https://static.wikia.nocookie.net/galaxystarsupermiraclenight/images/f/fb/Ramiel.png/" alt="Centered Image" class="responsive-img">
+  </div>
     </main>
 
     <footer>
