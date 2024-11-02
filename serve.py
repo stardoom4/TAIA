@@ -68,7 +68,7 @@ def generate_html_file(entry, entries, output_dir):
 <div class="sidebar">
     <nav>
         <ul>
-            <a href="index.html">Home</a>
+            <a href="microblog_page_1.html">Home</a>
             {generate_master_navigation(entries, entry)}
         </ul>
     </nav>
@@ -150,7 +150,7 @@ def generate_microblog_page(microblog_entries, entries, output_dir):
     </nav>
 </div>
 <div class="content">
-    <h1><a href="index.html">Wunder</a></h1>
+    <h1><a href="microblog_page_1.html">Wunder</a></h1>
     <div class="microblog-feed">
         {generate_microblog_feed(page_entries)}
     </div>
