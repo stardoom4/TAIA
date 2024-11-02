@@ -1,11 +1,98 @@
-TITLE: Master Page
-DESCRIPTION: This is the main master page.
-ID: master_page
+ID: 1
+TITLE: Wiki 
+AUTHOR: John Doe
+DATE: 2024-10-21
+KEYWORDS: master, overview
+DESCRIPTION: <p>This is the master page. It contains links to subpages.</p>
 
-TITLE: Sub Master Page 1
-DESCRIPTION: This is a sub-page of Master Page.
-PARENT: master_page
+ID: 2
+TITLE: Subpage1
+UNDER: index
+AUTHOR: Jane Smith
+DATE: 2024-10-22
+KEYWORDS: subpage1, detail
+DESCRIPTION: <p>This is the first subpage under the master page.</p>
 
-TITLE: Sub Master Page 1.1
-DESCRIPTION: Nested sub-page under Sub Master Page 1.
-PARENT: sub_master_page_1
+ID: 3
+TITLE: Subpage2
+UNDER: index
+AUTHOR: Jane Smith
+DATE: 2024-10-23
+KEYWORDS: subpage2, detail
+DESCRIPTION: <p>This is the second subpage under the master page.</p>
+
+ID: 4
+TITLE: Another Master Page
+AUTHOR: John Doe
+DATE: 2024-10-24
+KEYWORDS: another, overview
+DESCRIPTION: <p>This is another master page.</p>
+
+ID: 5
+TITLE: Subpage3
+UNDER: Another Master Page
+AUTHOR: Jane Smith
+DATE: 2024-10-25
+KEYWORDS: subpage3, detail
+DESCRIPTION: <p>This is a subpage under another master page.</p>
+
+TITLE: Main Page
+DESCRIPTION: Welcome to the main page of this wiki. Here you can find links to all major sections.
+TAG: None
+
+TITLE: Science Section
+DESCRIPTION: The Science Section contains detailed articles on various scientific disciplines.
+TAG: None
+
+TITLE: Physics Overview
+DESCRIPTION: An overview of the field of physics.
+UNDER: Science Section
+TAG: None
+
+TITLE: Classical Mechanics
+DESCRIPTION: Articles related to Newtonian mechanics and classical dynamics.
+UNDER: Physics Overview
+TAG: None
+
+TITLE: Quantum Mechanics
+DESCRIPTION: Articles on quantum theory and the fundamental behavior of particles at small scales.
+UNDER: Physics Overview
+TAG: None
+
+TITLE: Mathematics Section
+DESCRIPTION: This section covers various topics in mathematics.
+TAG: None
+
+TITLE: Algebra Overview
+DESCRIPTION: An overview of algebraic structures and theories.
+UNDER: Mathematics Section
+TAG: None
+
+TITLE: Linear Algebra
+DESCRIPTION: This page covers matrix theory, vector spaces, and other aspects of linear algebra.
+UNDER: Algebra Overview
+TAG: None
+
+TITLE: Abstract Algebra
+DESCRIPTION: Covers topics in group theory, rings, and fields.
+UNDER: Algebra Overview
+TAG: None
+
+TITLE: Technology Section
+DESCRIPTION: The Technology Section contains articles on various modern technological advancements.
+TAG: None
+
+TITLE: Software Engineering
+DESCRIPTION: Software engineering best practices, tools, and development methodologies.
+UNDER: Technology Section
+TAG: None
+
+TITLE: Microservices Architecture
+DESCRIPTION: A guide to microservices and how to design scalable software systems.
+UNDER: Software Engineering
+TAG: None
+
+TITLE: Artificial Intelligence
+DESCRIPTION: An overview of AI concepts, algorithms, and their applications.
+UNDER: Technology Section
+TAG: None
