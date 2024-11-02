@@ -200,19 +200,28 @@ input[type=text] {
             color: #fff;
         }
 
-        .sidebar ul {
-            list-style-type: none;
-            padding: 0;
-        }
+     .sidebar ul {
+    list-style-type: none;
+    padding: 0;
+}
 
-        .sidebar ul li {
-            margin-bottom: 10px;
-        }
+.sidebar ul li {
+    margin: 5px 0;
+}
 
-        .sidebar ul li a {
-            text-decoration: none;
-            color: #cd5700;
-        }
+.sidebar ul li a {
+    color: #333;
+    text-decoration: none;
+}
+
+.sidebar ul li a:hover {
+    color: #0073e6;
+}
+
+.sidebar ul li {
+    /* Add visual indentation */
+    padding-left: 10px;
+}
 
         .toggle-btn {
             display: none;
