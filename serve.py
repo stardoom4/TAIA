@@ -53,7 +53,6 @@ def generate_html_file(entry, entries, output_dir):
     title = entry.get('TITLE', 'Untitled')
     description = entry.get('DESCRIPTION', 'No content available.')
 
-    # Generate the navigation menu with dynamic visibility for second master and subpages
     html_content = f"""<html>
 <head>
 <meta charset="UTF-8">
@@ -62,13 +61,12 @@ def generate_html_file(entry, entries, output_dir):
 <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
-<input type="text" id="searchInput" placeholder="Search..." onkeyup="searchPages()">
-<ul id="searchResults"></ul><button class="toggle-btn" aria-label="Toggle Sidebar">☰</button>
+<button class="toggle-btn" aria-label="Toggle Sidebar">☰</button>
 <div class="sidebar">
     <nav>
         <ul>
             <a href="index.html">Home</a>
-            {generate_master_navigation(entries, entry)}
+            {generate_master_navigation(entries, entry)} <!-- Recursive navigation generation -->
         </ul>
     </nav>
 </div>
@@ -89,36 +87,29 @@ def generate_html_file(entry, entries, output_dir):
         html_file.write(html_content)
 
 
-def generate_master_navigation(entries, current_entry):
-    nav_links = []
-
-    # Get all master pages (excluding microblog pages)
-    master_pages = [entry for entry in entries if 'UNDER' not in entry and entry.get('TAG') != 'mb']
-
-    for master_entry in master_pages:
-        master_title = master_entry['TITLE']
-        master_file_name = f"{master_title.replace(' ', '_').lower()}.html"
-        nav_links.append(f'<li><a href="{master_file_name}">{master_title}</a></li>')
-
-        # Show second master and subpages only when the user is on the master page
-        if master_entry == current_entry:
-            second_master_pages = [entry for entry in entries if entry.get('UNDER') == master_title]
-            
-            for second_master in second_master_pages:
-                second_master_title = second_master['TITLE']
-                second_master_file_name = f"{second_master_title.replace(' ', '_').lower()}.html"
-                nav_links.append(f'<li style="margin-left:20px;"><a href="{second_master_file_name}">{second_master_title}</a></li>')
-
-                sub_pages = [entry for entry in entries if entry.get('UNDER') == second_master_title]
-                
-                if sub_pages:
-                    sub_nav_links = [
-                        f'<li style="margin-left:40px;"><a href="{entry["TITLE"].replace(" ", "_").lower()}.html">{entry["TITLE"]}</a></li>'
-                        for entry in sub_pages
-                    ]
-                    nav_links.append('<ul>' + ''.join(sub_nav_links) + '</ul>')
+def generate_master_navigation(entries, current_entry, parent_id=None, level=0):
+    # Filter entries that are children of the current parent_id
+    child_entries = [entry for entry in entries if entry.get('PARENT') == parent_id]
     
-    return "\n".join(nav_links)
+    if not child_entries:
+        return ""  # If no children, return empty string
+
+    nav_links = '<ul>' if level > 0 else ''  # Nest only if we are below the top level
+    
+    for child_entry in child_entries:
+        title = child_entry['TITLE']
+        file_name = f"{title.replace(' ', '_').lower()}.html"
+        indent_style = f"margin-left:{level * 20}px;"  # Indent each level
+
+        nav_links += f'<li style="{indent_style}"><a href="{file_name}">{title}</a>'
+
+        # Recursively add sub-navigation for the current child entry
+        nav_links += generate_master_navigation(entries, current_entry, parent_id=child_entry['ID'], level=level+1)
+        
+        nav_links += '</li>'
+
+    nav_links += '</ul>' if level > 0 else ''  # Close nested <ul> only if below top level
+    return nav_links
 
 
 def generate_microblog_page(microblog_entries, entries, output_dir):
