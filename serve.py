@@ -55,6 +55,7 @@ def generate_html_file(entry, entries, output_dir):
 
     # Generate the navigation menu with dynamic visibility for second master and subpages
     html_content = f"""<html>
+<!DOCTYPE html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -131,6 +132,7 @@ def generate_microblog_page(microblog_entries, entries, output_dir):
         page_entries = microblog_entries[start_idx:end_idx]
 
         html_content = f"""<html>
+<!DOCTYPE html>       
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
