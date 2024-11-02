@@ -180,7 +180,7 @@ def generate_microblog_feed(entries):
         <h3>{title}</h3>
         <p class="microblog-date">{date}</p> <!-- Display the date -->
         <p>{description}</p>
-        <a href="#post-{sn}" class="anchor-link">Link to this post</a> <!-- Anchor link -->
+        <a href="#post-{sn}" class="anchor-link">Ø</a> <!-- Anchor link -->
         </div>
         <hr>
         """
