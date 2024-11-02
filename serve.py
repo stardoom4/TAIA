@@ -172,10 +172,15 @@ def generate_microblog_feed(entries):
     for entry in entries:
         title = entry.get('TITLE', 'Untitled')
         description = entry.get('DESCRIPTION', 'No content available.')
+        sn = entry.get('SN', '0')  # Default to 0 if no SN is provided
+        date = entry.get('DATE', 'Unknown Date')  # Default if no DATE is provided
 
-        feed_content += f"""<div class="microblog-entry">
+        # Create a unique anchor link for each entry using the SN
+        feed_content += f"""<div class="microblog-entry" id="post-{sn}">
         <h3>{title}</h3>
+        <p class="microblog-date">{date}</p> <!-- Display the date -->
         <p>{description}</p>
+        <a href="#post-{sn}" class="anchor-link">Link to this post</a> <!-- Anchor link -->
         </div>
         <hr>
         """
