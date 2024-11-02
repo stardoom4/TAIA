@@ -290,3 +290,24 @@ input[type=text] {
     margin: 0;
     font-size: 14px;
 }
+
+.microblog-entry h3 {
+    font-size: 1.2em;
+    margin-bottom: 0.3em;
+}
+
+.microblog-date {
+    font-size: 0.9em;
+    color: #f4f4f4;
+    margin-bottom: 1em;
+}
+
+.anchor-link {
+    font-size: 0.8em;
+    color: #cd5700;
+    text-decoration: none;
+}
+
+.anchor-link:hover {
+    text-decoration: underline;
+}
