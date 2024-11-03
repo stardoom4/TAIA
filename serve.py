@@ -7,7 +7,7 @@ def generate_html_from_taia(file_path, output_dir, microblog_file):
     entries = read_taia_file(file_path)
     microblog_entries = read_taia_file(microblog_file)
 
-    # Copy the style.css, script.js, and splash.html to the output directory
+    # Copy the style.css and script.js file to the output directory
     for file_name in ['style.css', 'script.js', 'splash.html']:
         if os.path.exists(file_name):
             shutil.copy(file_name, os.path.join(output_dir, file_name))
@@ -23,11 +23,12 @@ def generate_html_from_taia(file_path, output_dir, microblog_file):
     # Generate search index file
     generate_search_index(entries, microblog_entries, output_dir)
 
-    # Copy the splash page to index.html
+    # Copy the first microblog page to index.html
     index_path = os.path.join(output_dir, 'index.html')
-    splash_page_path = os.path.join(output_dir, 'splash.html')
-    if os.path.exists(splash_page_path):
-        shutil.copy(splash_page_path, index_path)
+    first_microblog_page_path = os.path.join(output_dir, 'splash.html')
+    
+    if os.path.exists(first_microblog_page_path):
+        shutil.copy(first_microblog_page_path, index_path)
 
 
 def read_taia_file(file_path):
@@ -41,7 +42,7 @@ def read_taia_file(file_path):
                 entry[key] = value
             else:  # Blank line indicates end of an entry
                 if entry:
-                    entries.append(entry)
+                    entries.append(entry)  # Append entry to list
                     entry = {}  # Reset for next entry
         if entry:  # Handle last entry if no trailing blank line
             entries.append(entry)
@@ -52,7 +53,7 @@ def generate_html_file(entry, entries, output_dir):
     title = entry.get('TITLE', 'Untitled')
     description = entry.get('DESCRIPTION', 'No content available.')
 
-    # Generate the navigation menu with dynamic visibility for subpages
+    # Generate the navigation menu with dynamic visibility for second master and subpages
     html_content = f"""<html>
 <!DOCTYPE html>
 <head>
@@ -68,7 +69,7 @@ def generate_html_file(entry, entries, output_dir):
     <nav>
         <ul>
             <a href="microblog_page_1.html">Home</a>
-            {generate_master_navigation(entries, parent_title=None, level=0)}
+            {generate_master_navigation(entries, entry)}
         </ul>
     </nav>
 </div>
@@ -77,9 +78,9 @@ def generate_html_file(entry, entries, output_dir):
     {description}
 </div>
 <script src="script.js"></script>
-<div class="footer">
+ <div class="footer">
 <p>TAIA</p>
-</div>
+      </div>
 </body>
 </html>
 """
@@ -89,29 +90,35 @@ def generate_html_file(entry, entries, output_dir):
         html_file.write(html_content)
 
 
-def generate_master_navigation(entries, parent_title=None, level=0):
-    """
-    Recursively generates an unlimited nested navigation menu.
-    :param entries: List of all entries.
-    :param parent_title: Title of the current parent entry.
-    :param level: Current nesting level for indentation.
-    :return: HTML string with nested navigation links.
-    """
+def generate_master_navigation(entries, current_entry):
     nav_links = []
 
-    # Identify entries that are direct children of the current parent
-    child_entries = [entry for entry in entries if entry.get('UNDER') == parent_title]
+    # Get all master pages (excluding microblog pages)
+    master_pages = [entry for entry in entries if 'UNDER' not in entry and entry.get('TAG') != 'mb']
 
-    for entry in child_entries:
-        title = entry.get('TITLE', 'Untitled')
-        file_name = f"{title.replace(' ', '_').lower()}.html"
-        
-        # Create link for the current entry
-        nav_links.append(f'<li style="margin-left:{level * 20}px;"><a href="{file_name}">{title}</a></li>')
+    for master_entry in master_pages:
+        master_title = master_entry['TITLE']
+        master_file_name = f"{master_title.replace(' ', '_').lower()}.html"
+        nav_links.append(f'<li><a href="{master_file_name}">{master_title}</a></li>')
 
-        # Recursively add children of this entry
-        nav_links.append(generate_master_navigation(entries, parent_title=title, level=level + 1))
+        # Show second master and subpages only when the user is on the master page
+        if master_entry == current_entry:
+            second_master_pages = [entry for entry in entries if entry.get('UNDER') == master_title]
+            
+            for second_master in second_master_pages:
+                second_master_title = second_master['TITLE']
+                second_master_file_name = f"{second_master_title.replace(' ', '_').lower()}.html"
+                nav_links.append(f'<li style="margin-left:20px;"><a href="{second_master_file_name}">{second_master_title}</a></li>')
 
+                sub_pages = [entry for entry in entries if entry.get('UNDER') == second_master_title]
+                
+                if sub_pages:
+                    sub_nav_links = [
+                        f'<li style="margin-left:40px;"><a href="{entry["TITLE"].replace(" ", "_").lower()}.html">{entry["TITLE"]}</a></li>'
+                        for entry in sub_pages
+                    ]
+                    nav_links.append('<ul>' + ''.join(sub_nav_links) + '</ul>')
+    
     return "\n".join(nav_links)
 
 
@@ -150,9 +157,9 @@ def generate_microblog_page(microblog_entries, entries, output_dir):
     {generate_pagination(page_num, num_pages)}
 </div>
 <script src="script.js"></script>
-<div class="footer">
+ <div class="footer">
 <p>TAIA</p>
-</div>
+      </div>
 </body>
 </html>
 """
