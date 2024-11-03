@@ -27,6 +27,10 @@ document.addEventListener("DOMContentLoaded", function () {
         searchResults.innerHTML = '';
 
         if (query.length > 1) {  // Start searching after two characters
+            const results = searchIndex.filter(entry => entry.title.toLowerCase().includes(query));
+            results.forEach(result => {
+                const resultItem = document.createElement('div');
+                resultItem.innerHTML = `<a href="${result.url}">${result.title}</a>`;
             const results = searchIndex.filter(page => 
                 page.title.toLowerCase().includes(query)  // Only search in the title
             );
@@ -39,10 +43,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 `;
                 searchResults.appendChild(resultItem);
             });
-
-            if (results.length === 0) {
-                searchResults.innerHTML = '<p>No results found.</p>';
-            }
         }
     });
 });

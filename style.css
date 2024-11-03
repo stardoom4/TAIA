@@ -72,7 +72,6 @@ nav ul li a:hover {
   text-decoration: none;
 }
 
-
 h1 {
  font-family: sans-serif;
  color: #fff;
@@ -107,13 +106,14 @@ p {
 }
 
 a {
-  text-decoration: underline;
+  text-decoration: none;
+  color: #cd5700;
 }
 
 a:hover,
 ::selection {
-  background-color: var(--b_high);
-  color:var(--f_high);
+  background-color: #fff;
+  color:#000;
   text-decoration: none;
 }
 
@@ -138,22 +138,6 @@ img {
   margin: -20 -20 25px;
 }
 
-pre {
-  overflow: auto;
-  background: #000 !important;
-  padding: 10px;
-  font-size: 80%;
-  margin-bottom: 20px;
-  max-height: 700px;
-}
-
-code {
-  white-space: pre;
-}
-
-article {
-  font-family: monospace;
-}
 
 hr {
   margin-top: 10px;
@@ -196,20 +180,10 @@ input[type=text] {
   font-color: #000 !important;
 }
 
-footer {
-  border-top: 1.5px solid;
-  padding: 30px 0 0 0;
+.footer {
+  border-top: 1.6px solid #cd5700;
+  padding: 3px 0 0 16px;
   clear: both;
-}
-
-footer img {
-  margin: 0 0 -10px 0;
-  width: 30px;
-}
-
-footer>* {
-  display: inline-block;
-  margin-right: 5px;
 }
         .content {
             padding: 20px;
@@ -225,19 +199,28 @@ footer>* {
             color: #fff;
         }
 
-        .sidebar ul {
-            list-style-type: none;
-            padding: 0;
-        }
+     .sidebar ul {
+    list-style-type: none;
+    padding: 0;
+}
 
-        .sidebar ul li {
-            margin-bottom: 10px;
-        }
+.sidebar ul li {
+    margin: 5px 0;
+}
 
-        .sidebar ul li a {
-            text-decoration: none;
-            color: #cd5700;
-        }
+.sidebar ul li a {
+    color: #cd5700;
+    text-decoration: none;
+}
+
+.sidebar ul li a:hover {
+    color: #0073e6;
+}
+
+.sidebar ul li {
+    /* Add visual indentation */
+    padding-left: 10px;
+}
 
         .toggle-btn {
             display: none;
@@ -316,6 +299,27 @@ footer>* {
     font-size: 14px;
 }
 
+.microblog-entry h3 {
+    font-size: 1.2em;
+    margin-bottom: 0.3em;
+}
+
+.microblog-date {
+    font-size: 0.9em;
+    color: #f4f4f4;
+    margin-bottom: 1em;
+}
+
+.anchor-link {
+    font-size: 0.8em;
+    color: #cd5700;
+    text-decoration: none;
+}
+
+.anchor-link:hover {
+    text-decoration: underline;
+}
+
 .logo {
             position: absolute;
             top: 20px;
@@ -334,3 +338,4 @@ footer>* {
             width: 40px;
             margin: 0 0 25px;
         }
+
