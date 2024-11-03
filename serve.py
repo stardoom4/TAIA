@@ -13,6 +13,15 @@ def generate_html_from_taia(file_path, output_dir, microblog_file):
             shutil.copy(file_name, os.path.join(output_dir, file_name))
 
     # Generate HTML for each entry except for microblog
+
+    # Copy the style.css and script.js files to the output directory
+    if os.path.exists('style.css'):
+        shutil.copy('style.css', os.path.join(output_dir, 'style.css'))
+    if os.path.exists('script.js'):
+        shutil.copy('script.js', os.path.join(output_dir, 'script.js'))
+
+    # Generate each HTML file based on the entries
+
     for entry in entries:
         if entry.get('TAG') != 'mb':
             generate_html_file(entry, entries, output_dir)
@@ -29,6 +38,9 @@ def generate_html_from_taia(file_path, output_dir, microblog_file):
     
     if os.path.exists(first_microblog_page_path):
         shutil.copy(first_microblog_page_path, index_path)
+
+    # Generate the search index (JSON format)
+    generate_search_index(entries, output_dir)
 
 
 def read_taia_file(file_path):
@@ -64,7 +76,12 @@ def generate_html_file(entry, entries, output_dir):
 </head>
 <body>
 <input type="text" id="searchInput" placeholder="Search..." onkeyup="searchPages()">
+
 <ul id="searchResults"></ul><button class="toggle-btn" aria-label="Toggle Sidebar">☰</button>
+
+<ul id="searchResults"></ul>
+<button class="toggle-btn" aria-label="Toggle Sidebar">☰</button>
+
 <div class="sidebar">
     <nav>
         <ul>
@@ -72,6 +89,7 @@ def generate_html_file(entry, entries, output_dir):
             {generate_master_navigation(entries, entry)}
         </ul>
     </nav>
+
 </div>
 <div class="content">
     <h1>{title}</h1>
@@ -81,6 +99,12 @@ def generate_html_file(entry, entries, output_dir):
  <div class="footer">
 <p>TAIA</p>
       </div>
+    </div>
+    <div class="content">
+    <h1>{title}</h1>
+    {description} </div>
+    <script src="script.js"></script><!-- Description can contain HTML tags -->
+
 </body>
 </html>
 """
@@ -222,6 +246,23 @@ def generate_search_index(entries, microblog_entries, output_dir):
     # Save the search index as JSON
     with open(os.path.join(output_dir, 'search_index.json'), 'w') as json_file:
         json.dump(search_index, json_file, indent=2)
+
+def generate_search_index(entries, output_dir):
+    search_data = []
+    
+    # Prepare search data with just title and URL
+    for entry in entries:
+        title = entry.get('TITLE', 'Untitled')
+        file_name = f"{title.replace(' ', '_').lower()}.html"
+        search_data.append({
+            'title': title,
+            'url': file_name
+        })
+
+    # Save the search data as JSON
+    search_file_path = os.path.join(output_dir, 'search_index.json')
+    with open(search_file_path, 'w') as search_file:
+        json.dump(search_data, search_file)
 
 
 # Example usage
