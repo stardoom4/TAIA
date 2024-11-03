@@ -31,16 +31,6 @@ document.addEventListener("DOMContentLoaded", function () {
             results.forEach(result => {
                 const resultItem = document.createElement('div');
                 resultItem.innerHTML = `<a href="${result.url}">${result.title}</a>`;
-            const results = searchIndex.filter(page => 
-                page.title.toLowerCase().includes(query)  // Only search in the title
-            );
-
-            results.forEach(result => {
-                const resultItem = document.createElement('div');
-                resultItem.classList.add('search-result');
-                resultItem.innerHTML = `
-                    <h3><a href="${result.url}">${result.title}</a></h3>
-                `;
                 searchResults.appendChild(resultItem);
             });
         }
