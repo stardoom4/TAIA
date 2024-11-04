@@ -1,11 +1,12 @@
-ID: 1
+TITLE: Home
+DESCRIPTION: <h2>Home</h2>
+
 TITLE: Wiki 
 AUTHOR: John Doe
 DATE: 2024-10-21
 KEYWORDS: master, overview
 DESCRIPTION: <p>This is the master page. It contains links to subpages.</p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Le%C3%B3nidas_en_las_Term%C3%B3pilas%2C_por_Jacques-Louis_David.jpg/800px-Le%C3%B3nidas_en_las_Term%C3%B3pilas%2C_por_Jacques-Louis_David.jpg">
 
-ID: 2
 TITLE: Subpage1
 UNDER: index
 AUTHOR: Jane Smith
@@ -13,7 +14,6 @@ DATE: 2024-10-22
 KEYWORDS: subpage1, detail
 DESCRIPTION: <p>This is the first subpage under the master page.</p>
 
-ID: 3
 TITLE: Subpage2
 UNDER: index
 AUTHOR: Jane Smith
@@ -21,14 +21,12 @@ DATE: 2024-10-23
 KEYWORDS: subpage2, detail
 DESCRIPTION: <p>This is the second subpage under the master page.</p>
 
-ID: 4
 TITLE: Another Master Page
 AUTHOR: John Doe
 DATE: 2024-10-24
 KEYWORDS: another, overview
 DESCRIPTION: <p>This is another master page.</p>
 
-ID: 5
 TITLE: Subpage3
 UNDER: Another Master Page
 AUTHOR: Jane Smith
