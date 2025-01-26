@@ -193,6 +193,7 @@ input[type=text] {
         .sidebar {
             background-color: #000;
             padding: 20px;
+            border-right: #121212 solid 1px;
         }
 
         .sidebar h2 {
