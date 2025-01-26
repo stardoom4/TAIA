@@ -277,8 +277,9 @@ input[type=text] {
     font-size: 16px;
     margin-left: 20px;
     background-color: #000;
-    border: #000 solid 1px;
+    border: #121212 solid 1px;
     color: #fff;
+    outline: none;
 }
 
 #searchResults {
