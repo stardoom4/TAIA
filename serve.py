@@ -50,8 +50,8 @@ def read_taia_file(file_path):
 
 
 def generate_html_file(entry, entries, output_dir):
-    title = entry.get('TITLE', 'Untitled')
-    description = entry.get('DESCRIPTION', 'No content available.')
+    title = entry.get('TITL', 'Untitled')
+    description = entry.get('DESC', 'No content available.')
 
     # Generate the navigation menu with dynamic visibility for second master and subpages
     html_content = f"""<html>
@@ -94,19 +94,19 @@ def generate_master_navigation(entries, current_entry):
     nav_links = []
 
     # Get all master pages (excluding microblog pages)
-    master_pages = [entry for entry in entries if 'UNDER' not in entry and entry.get('TAG') != 'mb']
+    master_pages = [entry for entry in entries if 'UNDE' not in entry and entry.get('TAG') != 'mb']
 
     for master_entry in master_pages:
-        master_title = master_entry['TITLE']
+        master_title = master_entry['TITL']
         master_file_name = f"{master_title.replace(' ', '_').lower()}.html"
         nav_links.append(f'<li><a href="{master_file_name}">{master_title}</a></li>')
 
         # Show second master and subpages only when the user is on the master page
         if master_entry == current_entry:
-            second_master_pages = [entry for entry in entries if entry.get('UNDER') == master_title]
+            second_master_pages = [entry for entry in entries if entry.get('UNDE') == master_title]
             
             for second_master in second_master_pages:
-                second_master_title = second_master['TITLE']
+                second_master_title = second_master['TITL']
                 second_master_file_name = f"{second_master_title.replace(' ', '_').lower()}.html"
                 nav_links.append(f'<li style="margin-left:20px;"><a href="{second_master_file_name}">{second_master_title}</a></li>')
 
@@ -114,7 +114,7 @@ def generate_master_navigation(entries, current_entry):
                 
                 if sub_pages:
                     sub_nav_links = [
-                        f'<li style="margin-left:40px;"><a href="{entry["TITLE"].replace(" ", "_").lower()}.html">{entry["TITLE"]}</a></li>'
+                        f'<li style="margin-left:40px;"><a href="{entry["TITL"].replace(" ", "_").lower()}.html">{entry["TITL"]}</a></li>'
                         for entry in sub_pages
                     ]
                     nav_links.append('<ul>' + ''.join(sub_nav_links) + '</ul>')
@@ -172,9 +172,9 @@ def generate_microblog_page(microblog_entries, entries, output_dir):
 def generate_microblog_feed(entries):
     feed_content = ''
     for entry in entries:
-        title = entry.get('TITLE', 'Untitled')
-        description = entry.get('DESCRIPTION', 'No content available.')
-        sn = entry.get('SN', '0')  # Default to 0 if no SN is provided
+        title = entry.get('TITL', 'Untitled')
+        description = entry.get('DESC', 'No content available.')
+        sn = entry.get('SNNO', '0')  # Default to 0 if no SN is provided
         date = entry.get('DATE', 'Unknown Date')  # Default if no DATE is provided
 
         # Create a unique anchor link for each entry using the SN
@@ -215,7 +215,7 @@ def generate_search_index(entries, microblog_entries, output_dir):
 
     all_entries = entries + microblog_entries
     for entry in all_entries:
-        title = entry.get('TITLE', 'Untitled')
+        title = entry.get('TITL', 'Untitled')
         file_name = f"{title.replace(' ', '_').lower()}.html" if entry.get('TAG') != 'mb' else "microblog.html"
         search_index.append({'title': title, 'url': file_name})
 
@@ -225,4 +225,4 @@ def generate_search_index(entries, microblog_entries, output_dir):
 
 
 # Example usage
-generate_html_from_taia('elements.taia', 'output_pages', 'microblog.taia')
+generate_html_from_taia('database/lexicon.taia', 'output_pages', 'database/microblog.taia')

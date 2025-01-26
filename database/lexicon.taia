@@ -1,0 +1,68 @@
+TITL: Home
+DESC: <h2>Home</h2>
+
+TITL: Wiki 
+DESC: <p>This is the master page. It contains links to subpages.</p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Le%C3%B3nidas_en_las_Term%C3%B3pilas%2C_por_Jacques-Louis_David.jpg/800px-Le%C3%B3nidas_en_las_Term%C3%B3pilas%2C_por_Jacques-Louis_David.jpg">
+
+TITL: Subpage1
+UNDE: index
+DESC: <p>This is the first subpage UNDE the master page.</p>
+
+TITL: Subpage2
+UNDE: index
+DESC: <p>This is the second subpage UNDE the master page.</p>
+
+TITL: Another Master Page
+DESC: <p>This is another master page.</p>
+
+TITL: Subpage3
+UNDE: Another Master Page
+DESC: <p>This is a subpage UNDE another master page.</p>
+
+TITL: Main Page
+DESC: Welcome to the main page of this wiki. Here you can find links to all major sections.
+
+TITL: Science Section
+DESC: The Science Section contains detailed articles on various scientific disciplines.
+
+TITL: Physics Overview
+DESC: An overview of the field of physics.
+UNDE: Science Section
+
+TITL: Classical Mechanics
+DESC: Articles related to Newtonian mechanics and classical dynamics.
+UNDE: Physics Overview
+
+TITL: Quantum Mechanics
+DESC: Articles on quantum theory and the fundamental behavior of particles at small scales.
+UNDE: Physics Overview
+
+TITL: Mathematics Section
+DESC: This section covers various topics in mathematics.
+
+TITL: Algebra Overview
+DESC: An overview of algebraic structures and theories.
+UNDE: Mathematics Section
+
+TITL: Linear Algebra
+DESC: This page covers matrix theory, vector spaces, and other aspects of linear algebra.
+UNDE: Algebra Overview
+
+TITL: Abstract Algebra
+DESC: Covers topics in group theory, rings, and fields.
+UNDE: Algebra Overview
+
+TITL: Technology Section
+DESC: The Technology Section contains articles on various modern technological advancements.
+
+TITL: Software Engineering
+DESC: Software engineering best practices, tools, and development methodologies.
+UNDE: Technology Section
+
+TITL: Microservices Architecture
+DESC: A guide to microservices and how to design scalable software systems.
+UNDE: Software Engineering
+
+TITL: Artificial Intelligence
+DESC: An overview of AI concepts, algorithms, and their applications.
+UNDE: Technology Section
