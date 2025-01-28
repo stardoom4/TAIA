@@ -178,7 +178,7 @@ def generate_microblog_page(microblog_entries, entries, output_dir):
 <div class="sidebar">
     <nav>
         <ul>
-            {generate_master_navigation(entries, None)}  <!-- Include all master pages -->
+            {generate_category_navigation(entries, None)}  <!-- Include all master pages -->
         </ul>
     </nav>
 </div>
