@@ -58,7 +58,7 @@ def generate_tag_pages(entries, output_dir):
     for entry in entries:
         tags = entry.get('TAGS', '')
         for tag in tags.split(','):
-            all_tags.add(tag.strip().lower())  # Clean and add to set
+            all_tags.add(tag.strip().lower())  # Normalize and add to the set
 
     # Generate a page for each tag
     for tag in all_tags:
@@ -77,12 +77,12 @@ def generate_tag_pages(entries, output_dir):
     <nav>
         <ul>
             <a href="microblog_page_1.html">Home</a>
-            {generate_category_navigation(entries, None)}
+            {generate_master_navigation(entries, None)}
         </ul>
     </nav>
 </div>
 <div class="content">
-    <h1>Posts tagged with "{tag.capitalize()}"</h1>
+    <h1>Tagged with "{tag.capitalize()}"</h1>
     <ul>
         {generate_tagged_entries(entries, tag)}
     </ul>
@@ -98,15 +98,20 @@ def generate_tag_pages(entries, output_dir):
         with open(os.path.join(output_dir, tag_file_name), 'w') as html_file:
             html_file.write(html_content)
 
+
 def generate_tagged_entries(entries, tag):
     # Find all entries that have the specified tag
-    tagged_entries = [entry for entry in entries if tag in entry.get('TAGS', '').split(',')]
+    tagged_entries = [entry for entry in entries if tag in [t.strip().lower() for t in entry.get('TAGS', '').split(',')]]
+    
+    # Generate HTML links for each tagged entry
     entries_html = ''
     for entry in tagged_entries:
         title = entry.get('TITL', 'Untitled')
         file_name = f"{title.replace(' ', '_').lower()}.html"
-        entries_html += f'<li><a href="{file_name}">{title}</a></li>'
+        entries_html += f'<li><a href="{file_name}">{title}</a></li>\n'
+
     return entries_html
+
 
 def read_taia_file(file_path):
     entries = []
