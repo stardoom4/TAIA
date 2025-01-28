@@ -77,7 +77,7 @@ def generate_tag_pages(entries, output_dir):
     <nav>
         <ul>
             <a href="microblog_page_1.html">Home</a>
-            {generate_master_navigation(entries, None)}
+            {generate_category_navigation(entries, None)}
         </ul>
     </nav>
 </div>
