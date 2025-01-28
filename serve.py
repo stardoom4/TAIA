@@ -108,44 +108,40 @@ def generate_html_file(entry, entries, output_dir):
 
 
 def generate_category_navigation(entries, current_entry):
-    """
-    Generate navigation specific to the current category (master page and its hierarchy).
-
-    Args:
-        entries (list): All entries from the .taia file.
-        current_entry (dict): The current entry being rendered.
-
-    Returns:
-        str: HTML navigation for the current category.
-    """
     nav_links = []
+    current_master_title = None
 
-    # Identify all master pages (excluding microblog pages)
-    master_pages = [entry for entry in entries if 'UNDE' not in entry and entry.get('TAG') != 'mb']
+    # If `current_entry` is not None, get its master title
+    if current_entry:
+        current_master_title = current_entry.get('UNDE')
+
+    # Get all master pages
+    master_pages = [entry for entry in entries if 'UNDE' not in entry]
 
     for master_entry in master_pages:
         master_title = master_entry['TITL']
         master_file_name = f"{master_title.replace(' ', '_').lower()}.html"
-        is_current_master = master_entry == current_entry or master_entry['TITL'] == current_entry.get('UNDE')
 
-        # Add the master page to the navigation
+        # Add link for the master page
         nav_links.append(f'<li><a href="{master_file_name}">{master_title}</a></li>')
 
-        # Only display second master and sub-pages if the user is in the current master category
+        # Check if this master page is the current page or its parent
+        is_current_master = current_entry and (
+            master_entry == current_entry or master_title == current_master_title
+        )
+
+        # Generate navigation for second-level masters and subpages
         if is_current_master:
             second_master_pages = [entry for entry in entries if entry.get('UNDE') == master_title]
 
             for second_master in second_master_pages:
                 second_master_title = second_master['TITL']
                 second_master_file_name = f"{second_master_title.replace(' ', '_').lower()}.html"
-                is_current_second_master = second_master == current_entry or second_master['TITL'] == current_entry.get('UNDE')
-
-                # Add second master pages
                 nav_links.append(f'<li style="margin-left:20px;"><a href="{second_master_file_name}">{second_master_title}</a></li>')
 
-                # Add sub-pages only if the current entry belongs to this second master
-                if is_current_second_master:
-                    sub_pages = [entry for entry in entries if entry.get('UNDE') == second_master_title]
+                # Generate navigation for subpages
+                sub_pages = [entry for entry in entries if entry.get('UNDE') == second_master_title]
+                if sub_pages:
                     sub_nav_links = [
                         f'<li style="margin-left:40px;"><a href="{entry["TITL"].replace(" ", "_").lower()}.html">{entry["TITL"]}</a></li>'
                         for entry in sub_pages
