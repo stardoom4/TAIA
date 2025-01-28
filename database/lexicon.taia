@@ -5,7 +5,7 @@ TITL: Wiki
 DESC: <p>This is the master page. It contains links to subpages.</p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Le%C3%B3nidas_en_las_Term%C3%B3pilas%2C_por_Jacques-Louis_David.jpg/800px-Le%C3%B3nidas_en_las_Term%C3%B3pilas%2C_por_Jacques-Louis_David.jpg">
 
 TITL: Faora
-DESC: (link "https://github.com/stardoom4/Faora" "Faora") is a Static wiki generator with a microblog as the front page. Like (link "https://github.com/xxiivv/oscean" "Oscean"), the content of the site + the microblog is extracted from two .taia files.
+DESC: (link "https://github.com/stardoom4/Faora" "Faora") is a Static wiki generator with a microblog as the front page. Like (link "https://github.com/xxiivv/oscean" "Oscean"), the content of the site + the microblog is extracted from two .taia files. Faora uses (intl "Maia") as a simple template system.
 TAGS: Tools
 
 TITL: Maia 

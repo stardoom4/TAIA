@@ -52,6 +52,19 @@ def format_text(text):
 
     return text
 
+def replace_internal_links(content):
+    """
+    Replace (intl "page") with HTML links in the content.
+    """
+    pattern = r'\(intl\s*"(.*?)"\)'
+    
+    def link_replacer(match):
+        page_name = match.group(1)
+        file_name = f"{page_name.replace(' ', '_').lower()}.html"
+        return f'<a href="{file_name}">{page_name}</a>'
+    
+    return re.sub(pattern, link_replacer, content)
+
 def generate_tag_pages(entries, output_dir):
     # Create a set of unique tags
     all_tags = set()
@@ -134,6 +147,8 @@ def generate_html_file(entry, entries, output_dir):
     title = entry.get('TITL', 'Untitled')
     description = format_text(entry.get('DESC', 'No content available.'))
     tags = entry.get('TAGS', '').split(',')  # Get tags, split by comma
+
+    content_with_links = replace_internal_links(content)
 
     # Generate the navigation menu with dynamic visibility for second master and subpages
     html_content = f"""<html>
