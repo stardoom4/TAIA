@@ -18,6 +18,9 @@ def generate_html_from_taia(file_path, output_dir, microblog_file):
         if entry.get('TAG') != 'mb':
             generate_html_file(entry, entries, output_dir)
 
+    # Generate tag pages
+    generate_tag_pages(entries, output_dir)
+
     # Generate the microblog page with pagination
     generate_microblog_page(microblog_entries, entries, output_dir)
 
@@ -30,6 +33,7 @@ def generate_html_from_taia(file_path, output_dir, microblog_file):
     
     if os.path.exists(first_microblog_page_path):
         shutil.copy(first_microblog_page_path, index_path)
+
 
 def format_text(text):
     """
@@ -47,6 +51,62 @@ def format_text(text):
         text = re.sub(ital_pattern, lambda m: f'<em>{m.group(1)}</em>', text)
 
     return text
+
+def generate_tag_pages(entries, output_dir):
+    # Create a set of unique tags
+    all_tags = set()
+    for entry in entries:
+        tags = entry.get('TAGS', '')
+        for tag in tags.split(','):
+            all_tags.add(tag.strip().lower())  # Clean and add to set
+
+    # Generate a page for each tag
+    for tag in all_tags:
+        html_content = f"""<html>
+<!DOCTYPE html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{tag.capitalize()} Posts</title>
+<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+<input type="text" id="searchInput" placeholder="Search..." onkeyup="searchPages()">
+<ul id="searchResults"></ul><button class="toggle-btn" aria-label="Toggle Sidebar">☰</button>
+<div class="sidebar">
+    <nav>
+        <ul>
+            <a href="microblog_page_1.html">Home</a>
+            {generate_master_navigation(entries, None)}
+        </ul>
+    </nav>
+</div>
+<div class="content">
+    <h1>Posts tagged with "{tag.capitalize()}"</h1>
+    <ul>
+        {generate_tagged_entries(entries, tag)}
+    </ul>
+</div>
+<script src="script.js"></script>
+ <div class="footer">
+<p>TAIA</p>
+      </div>
+</body>
+</html>
+"""
+        tag_file_name = f"tag_{tag}.html"
+        with open(os.path.join(output_dir, tag_file_name), 'w') as html_file:
+            html_file.write(html_content)
+
+def generate_tagged_entries(entries, tag):
+    # Find all entries that have the specified tag
+    tagged_entries = [entry for entry in entries if tag in entry.get('TAGS', '').split(',')]
+    entries_html = ''
+    for entry in tagged_entries:
+        title = entry.get('TITL', 'Untitled')
+        file_name = f"{title.replace(' ', '_').lower()}.html"
+        entries_html += f'<li><a href="{file_name}">{title}</a></li>'
+    return entries_html
 
 def read_taia_file(file_path):
     entries = []
@@ -68,10 +128,9 @@ def read_taia_file(file_path):
 def generate_html_file(entry, entries, output_dir):
     title = entry.get('TITL', 'Untitled')
     description = format_text(entry.get('DESC', 'No content available.'))
+    tags = entry.get('TAGS', '').split(',')  # Get tags, split by comma
 
-    # Generate navigation specific to the current category
-    navigation = generate_category_navigation(entries, entry)
-
+    # Generate the navigation menu with dynamic visibility for second master and subpages
     html_content = f"""<html>
 <!DOCTYPE html>
 <head>
@@ -86,22 +145,25 @@ def generate_html_file(entry, entries, output_dir):
 <div class="sidebar">
     <nav>
         <ul>
-            {navigation}
+            <a href="microblog_page_1.html">Home</a>
+            {generate_master_navigation(entries, entry)}
         </ul>
     </nav>
 </div>
 <div class="content">
     <h1>{title}</h1>
-    {description}
+    <p>{description}</p>
+    <p>Tags: {', '.join([f'<a href="tag_{tag.strip().lower()}.html">{tag.strip()}</a>' for tag in tags])}</p>  <!-- Clickable tags -->
 </div>
 <script src="script.js"></script>
-<div class="footer">
-    <p>TAIA</p>
-</div>
+ <div class="footer">
+<p>TAIA</p>
+      </div>
 </body>
 </html>
 """
-    # Save the HTML file
+
+    # Save the HTML file with the title as the filename
     file_name = f"{title.replace(' ', '_').lower()}.html"
     with open(os.path.join(output_dir, file_name), 'w') as html_file:
         html_file.write(html_content)
