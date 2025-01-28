@@ -268,7 +268,7 @@ def generate_microblog_feed(entries):
     feed_content = ''
     for entry in entries:
         title = entry.get('TITL', 'Untitled')
-        description = entry.get('DESC', 'No content available.')
+        description = format_text(entry.get('DESC', 'No content available.'))
         sn = entry.get('SNNO', '0')  # Default to 0 if no SN is provided
         date = entry.get('DATE', 'Unknown Date')  # Default if no DATE is provided
 
