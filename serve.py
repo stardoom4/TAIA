@@ -54,15 +54,18 @@ def format_text(text):
 
 def replace_internal_links(content):
     """
-    Replace (intl "page") with HTML links in the content.
+    Replaces internal link syntax (intl "page") with HTML links.
     """
-    pattern = r'\(intl\s*"(.*?)"\)'
+    # Regex to match the internal link syntax
+    pattern = r'\(intl\s+"([^"]+)"\)'
     
+    # Replace the pattern with a proper link
     def link_replacer(match):
-        page_name = match.group(1)
-        file_name = f"{page_name.replace(' ', '_').lower()}.html"
-        return f'<a href="{file_name}">{page_name}</a>'
+        page_title = match.group(1)  # Get the page title from the match
+        link = f'{page_title.replace(" ", "_").lower()}.html'  # Create the link URL
+        return f'<a href="{link}">{page_title}</a>'  # Return the HTML link
     
+    # Substitute all matches in the content
     return re.sub(pattern, link_replacer, content)
 
 def generate_tag_pages(entries, output_dir):
