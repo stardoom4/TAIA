@@ -148,7 +148,7 @@ def generate_html_file(entry, entries, output_dir):
     description = format_text(entry.get('DESC', 'No content available.'))
     tags = entry.get('TAGS', '').split(',')  # Get tags, split by comma
 
-    content_with_links = replace_internal_links(content)
+    content_with_links = replace_internal_links(description)
 
     # Generate the navigation menu with dynamic visibility for second master and subpages
     html_content = f"""<html>
