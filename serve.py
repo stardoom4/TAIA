@@ -65,11 +65,13 @@ def read_taia_file(file_path):
             entries.append(entry)
     return entries
 
-
 def generate_html_file(entry, entries, output_dir):
     title = entry.get('TITL', 'Untitled')
-    description = format_text(entry.get('DESC', 'No content available.'))
-    # Generate the navigation menu with dynamic visibility for second master and subpages
+    description = entry.get('DESC', 'No content available.')
+
+    # Generate navigation specific to the current category
+    navigation = generate_category_navigation(entries, entry)
+
     html_content = f"""<html>
 <!DOCTYPE html>
 <head>
@@ -84,8 +86,7 @@ def generate_html_file(entry, entries, output_dir):
 <div class="sidebar">
     <nav>
         <ul>
-            <a href="microblog_page_1.html">Home</a>
-            {generate_master_navigation(entries, entry)}
+            {navigation}
         </ul>
     </nav>
 </div>
@@ -94,47 +95,63 @@ def generate_html_file(entry, entries, output_dir):
     {description}
 </div>
 <script src="script.js"></script>
- <div class="footer">
-<p>TAIA</p>
-      </div>
+<div class="footer">
+    <p>TAIA</p>
+</div>
 </body>
 </html>
 """
-    # Save the HTML file with the title as the filename
+    # Save the HTML file
     file_name = f"{title.replace(' ', '_').lower()}.html"
     with open(os.path.join(output_dir, file_name), 'w') as html_file:
         html_file.write(html_content)
 
 
-def generate_master_navigation(entries, current_entry):
+def generate_category_navigation(entries, current_entry):
+    """
+    Generate navigation specific to the current category (master page and its hierarchy).
+
+    Args:
+        entries (list): All entries from the .taia file.
+        current_entry (dict): The current entry being rendered.
+
+    Returns:
+        str: HTML navigation for the current category.
+    """
     nav_links = []
 
-    # Get all master pages (excluding microblog pages)
+    # Identify all master pages (excluding microblog pages)
     master_pages = [entry for entry in entries if 'UNDE' not in entry and entry.get('TAG') != 'mb']
 
     for master_entry in master_pages:
         master_title = master_entry['TITL']
         master_file_name = f"{master_title.replace(' ', '_').lower()}.html"
+        is_current_master = master_entry == current_entry or master_entry['TITL'] == current_entry.get('UNDE')
+
+        # Add the master page to the navigation
         nav_links.append(f'<li><a href="{master_file_name}">{master_title}</a></li>')
 
-        # Show second master and subpages only when the user is on the master page
-        if master_entry == current_entry:
+        # Only display second master and sub-pages if the user is in the current master category
+        if is_current_master:
             second_master_pages = [entry for entry in entries if entry.get('UNDE') == master_title]
-            
+
             for second_master in second_master_pages:
                 second_master_title = second_master['TITL']
                 second_master_file_name = f"{second_master_title.replace(' ', '_').lower()}.html"
+                is_current_second_master = second_master == current_entry or second_master['TITL'] == current_entry.get('UNDE')
+
+                # Add second master pages
                 nav_links.append(f'<li style="margin-left:20px;"><a href="{second_master_file_name}">{second_master_title}</a></li>')
 
-                sub_pages = [entry for entry in entries if entry.get('UNDER') == second_master_title]
-                
-                if sub_pages:
+                # Add sub-pages only if the current entry belongs to this second master
+                if is_current_second_master:
+                    sub_pages = [entry for entry in entries if entry.get('UNDE') == second_master_title]
                     sub_nav_links = [
                         f'<li style="margin-left:40px;"><a href="{entry["TITL"].replace(" ", "_").lower()}.html">{entry["TITL"]}</a></li>'
                         for entry in sub_pages
                     ]
                     nav_links.append('<ul>' + ''.join(sub_nav_links) + '</ul>')
-    
+
     return "\n".join(nav_links)
 
 
