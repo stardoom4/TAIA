@@ -67,7 +67,7 @@ def read_taia_file(file_path):
 
 def generate_html_file(entry, entries, output_dir):
     title = entry.get('TITL', 'Untitled')
-    description = entry.get('DESC', 'No content available.')
+    description = format_text(entry.get('DESC', 'No content available.'))
 
     # Generate navigation specific to the current category
     navigation = generate_category_navigation(entries, entry)
