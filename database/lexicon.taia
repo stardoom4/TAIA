@@ -6,6 +6,7 @@ DESC: <p>This is the master page. It contains links to subpages.</p><img src="ht
 
 TITL: Faora
 DESC: (link "https://github.com/stardoom4/Faora" "Faora") is a Static wiki generator with a microblog as the front page. Like (link "https://github.com/xxiivv/oscean" "Oscean"), the content of the site + the microblog is extracted from two .taia files.
+TAGS: Tools
 
 TITL: Maia 
 UNDE: Faora
