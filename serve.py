@@ -55,10 +55,10 @@ def format_text(text):
 
     # Generate references section at the bottom
     if links:
-        references_html = "<summary><h2>References</h2></summary><ul>"
+        references_html = "<details><summary><strong>References</strong></summary><ul>"
         for url, label in links:
             references_html += f'<li><a href="{url}">{label if label else url}</a></li>'
-        references_html += "</ul>"
+        references_html += "</ul></details"
 
         text += "\n\n" + references_html  # Append to the text
 
