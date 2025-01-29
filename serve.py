@@ -44,12 +44,24 @@ def format_text(text):
     bold_pattern = r'\(bold "([^"]+)"\)'
     ital_pattern = r'\(ital "([^"]+)"\)'
 
+    links = re.findall(link_pattern, text) + re.findall(intl_pattern, text)
+
     # Recursive replacement for nested formatting
     while re.search(link_pattern, text) or re.search(bold_pattern, text) or re.search(ital_pattern, text) or re.search(intl_pattern, text):
         text = re.sub(link_pattern, lambda m: f'<a href="{m.group(1)}">{m.group(2) if m.group(2) else m.group(1)}</a>', text)
-        text = re.sub(intl_pattern, lambda m: f'<a href="{m.group(1)}">{m.group(2) if m.group(2) else m.group(1)}</a>', text)
+        text = re.sub(intl_pattern, lambda m: f'<a href="{m.group(1)}.html">{m.group(2) if m.group(2) else m.group(1)}</a>', text)
         text = re.sub(bold_pattern, lambda m: f'<strong>{m.group(1)}</strong>', text)
         text = re.sub(ital_pattern, lambda m: f'<em>{m.group(1)}</em>', text)
+
+
+    # Generate references section at the bottom
+    if links:
+        references_html = "<h2>References</h2><ul>"
+        for url, label in links:
+            references_html += f'<li><a href="{url if "://" in url else url+".html"}">{label if label else url}</a></li>'
+        references_html += "</ul>"
+
+        text += "\n\n" + references_html  # Append to the text
 
     return text
 
