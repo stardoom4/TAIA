@@ -12,19 +12,11 @@
 }
 
 body {
-  padding: 30px;
+  padding:26px;
   font-size: 16px;
   background-color: #000;
   height: 100%;
   margin-left: -30px;
-}
-
-body>* {
-  margin-bottom: 25px;
-}
-
-body>*>* {
-  margin-bottom: 25px;
 }
 
 table td,
@@ -48,29 +40,6 @@ header {
   margin: 2px 30px 30px 0;
 }
 
-nav {
-  margin: 0 0 30px;
-}
-
-nav ul {
-  padding: 0;
-  margin: 0 45px 30px 0;
-  float: left;
-}
-
-nav ul li {
-  list-style-type: none;
-}
-
-nav ul li a {
-  padding: 1px 4px;
-}
-
-nav ul li a:hover {
-  background: #fff !important;
-  color: black !important;
-  text-decoration: none;
-}
 
 h1 {
  font-family: sans-serif;
@@ -94,7 +63,7 @@ h4 {
 
 ul,
 ol {
-  margin: 0 30px 30px 30px;
+  margin: 0 30px 10px 10px;
 }
 
 ul ul {
@@ -102,7 +71,7 @@ ul ul {
 }
 
 p {
-  line-height: 160%;
+  line-height: 16px;
 }
 
 a {
@@ -159,35 +128,21 @@ blockquote::selection {
   text-decoration: none;
 }
 
-del {
-  text-decoration: line-through;
-}
-
 main>ul li {
   line-height: 150%;
 }
 
-.poem {
-  font-family: serif;
-  font-style: italic;
-  font-size: 18px;
-  line-height: 160%;
-  margin: 0 0 30px 0;
-  background: none;
-  padding: 0;
-  margin: 0;
-}
 input[type=text] {
   font-color: #000 !important;
 }
 
 .footer {
   border-top: 1.6px solid #007bff;
-  padding: 3px 0 0 16px;
+  padding: 4px 0 0 16px;
   clear: both;
 }
         .content {
-            padding: 20px;
+            padding:20px;
         }
 
         .sidebar {
@@ -207,7 +162,7 @@ input[type=text] {
 }
 
 .sidebar ul li {
-    margin: 5px 0;
+    margin: 6px -20;
 }
 
 .sidebar ul li a {
@@ -221,19 +176,19 @@ input[type=text] {
 
 .sidebar ul li {
     /* Add visual indentation */
-    padding-left: 10px;
+    padding-left:10px;
 }
 
         .toggle-btn {
             display: none;
             position: fixed;
-            right: 20px;
+            right: 10px;
             top: 20px;
             z-index: 999;
             background-color: transparent;
-            color: white;
+            color: #fff;
             border: none;
-            padding: 10px 15px;
+            padding: 10px 12px;
             cursor: pointer;
         }
         @media (min-width: 768px) {
@@ -322,23 +277,3 @@ input[type=text] {
 .anchor-link:hover {
     text-decoration: underline;
 }
-
-.logo {
-            position: absolute;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 1000;
-            background-color: transparent;
-            padding: 10px;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-
-        .logo img {
-            max-width: 60px;
-            height: 40px;
-            width: 40px;
-            margin: 0 0 25px;
-        }
-
