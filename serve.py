@@ -169,8 +169,8 @@ def generate_html_file(entry, entries, output_dir):
 </div>
 <div class="content">
     <h1>{title}</h1>
-    <p>{description}</p>
     <p>Tags: {', '.join([f'<a href="tag_{tag.strip().lower()}.html">{tag.strip()}</a>' for tag in tags])}</p>  <!-- Clickable tags -->
+    <p>{description}</p>
 </div>
 <script src="script.js"></script>
  <div class="footer">
