@@ -362,8 +362,8 @@ def generate_html(entries, output_file):
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Bookmarks</title>
-        <link rel="stylesheet" href="/file/style.css">
-        <script src="/file/script.js"></script> 
+        <link rel="stylesheet" href="bookmark.css">
+        <script src="script.js"></script> 
     </head>
     <body>
         <nav class="navbar">
