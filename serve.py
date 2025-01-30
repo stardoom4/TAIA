@@ -335,8 +335,6 @@ def generate_search_index(entries, microblog_entries, output_dir):
 # Example usage
 generate_html_from_taia('database/lexicon.taia', 'output_pages', 'database/microblog.taia')
 
-import os
-
 # Function to parse the .taia file
 def parse_taia_file(filepath):
     entries = []
@@ -363,13 +361,13 @@ def generate_html(entries, output_file):
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Bookmark Moodboard</title>
+        <title>Bookmarks</title>
         <link rel="stylesheet" href="/file/style.css">
         <script src="/file/script.js"></script> 
     </head>
     <body>
         <nav class="navbar">
-            <div class="nav-brand">Bookmark Moodboard</div>
+            <div class="nav-brand">Bookmarks</div>
             <div class="nav-search">
                 <input type="text" id="searchBar" placeholder="Search bookmarks..." onkeyup="filterCards()">
                 <button id="searchIcon" onclick="toggleSearch()">🔍</button>
@@ -407,7 +405,7 @@ def generate_html(entries, output_file):
 
 # Main script
 def main():
-    input_file = "data/bookmark.taia"
+    input_file = "database/bookmark.taia"
     output_file = "bookmark.html"
     
     if not os.path.exists(input_file):
