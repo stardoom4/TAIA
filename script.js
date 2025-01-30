@@ -36,3 +36,33 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 });
+
+// Search bar
+function toggleSearch() {
+    const searchBar = document.getElementById('searchBar');
+    if (searchBar.style.display === 'inline-block' || searchBar.style.display === '') {
+        searchBar.style.display = 'none';
+    } else {
+        searchBar.style.display = 'inline-block';
+        searchBar.focus();
+    }
+}
+
+// Filter Cards
+function filterCards() {
+    const query = document.getElementById('searchBar').value.toLowerCase();
+    const cards = document.querySelectorAll('.card');
+    cards.forEach(card => {
+        const text = card.textContent.toLowerCase();
+        card.style.display = text.includes(query) ? '' : 'none';
+    });
+}
+
+// Filter cards by tag
+function filterByTag(tag) {
+    const cards = document.querySelectorAll('.card');
+    cards.forEach(card => {
+        const tags = card.querySelector('p:last-child').textContent;
+        card.style.display = tags.includes(tag) ? '' : 'none';
+    });
+}
