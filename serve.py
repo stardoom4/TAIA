@@ -163,6 +163,7 @@ def generate_html_file(entry, entries, output_dir):
     <nav>
         <ul>
             <a href="microblog_page_1.html">Home</a>
+            <a href="bookmark.html">Bookmarks</a>
             {generate_category_navigation(entries, entry)}
         </ul>
     </nav>
