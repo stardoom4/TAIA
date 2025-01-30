@@ -9,7 +9,7 @@ def generate_html_from_taia(file_path, output_dir, microblog_file):
     microblog_entries = read_taia_file(microblog_file)
 
     # Copy the style.css and script.js file to the output directory
-    for file_name in ['style.css', 'script.js', 'splash.html']:
+    for file_name in ['style.css', 'script.js', 'splash.html', 'bookmark.css']:
         if os.path.exists(file_name):
             shutil.copy(file_name, os.path.join(output_dir, file_name))
 
