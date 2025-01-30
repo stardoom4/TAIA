@@ -1,4 +1,4 @@
-import os
+.import os
 import shutil
 import json
 import re
@@ -334,3 +334,93 @@ def generate_search_index(entries, microblog_entries, output_dir):
 
 # Example usage
 generate_html_from_taia('database/lexicon.taia', 'output_pages', 'database/microblog.taia')
+
+import os
+
+# Function to parse the .taia file
+def parse_taia_file(filepath):
+    entries = []
+    with open(filepath, 'r', encoding='utf-8') as file:
+        entry = {}
+        for line in file:
+            line = line.strip()
+            if line == "---":  # Delimiter for entries
+                if entry:
+                    entries.append(entry)
+                entry = {}
+            elif ":" in line:
+                key, value = line.split(":", 1)
+                entry[key.strip()] = value.strip()
+        if entry:  # Add the last entry
+            entries.append(entry)
+    return entries
+
+# Function to generate the HTML
+def generate_html(entries, output_file):
+    html_start = """
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Bookmark Moodboard</title>
+        <link rel="stylesheet" href="/file/style.css">
+        <script src="/file/script.js"></script> 
+    </head>
+    <body>
+        <nav class="navbar">
+            <div class="nav-brand">Bookmark Moodboard</div>
+            <div class="nav-search">
+                <input type="text" id="searchBar" placeholder="Search bookmarks..." onkeyup="filterCards()">
+                <button id="searchIcon" onclick="toggleSearch()">🔍</button>
+            </div>
+        </nav>
+
+        <div class="grid">
+    """
+    html_end = """
+        </div>
+    </body>
+    </html>
+    """
+    # Generate cards for each entry
+    html_cards = ""
+    for entry in entries:
+        title = entry.get("TITL", "Untitled")
+        description = entry.get("DESC", "")
+        link = entry.get("LINK", "#")
+        tags = entry.get("TAGS", "")
+
+        html_cards += f"""
+            <div class="card">
+                <h2>{title}</h2>
+                <p>{description}</p>
+                <p><strong>Tags:</strong> {tags}</p>
+                {"<p><a href='" + link + "' target='_blank'>Visit Link</a></p>" if link != "#" else ""}
+                <p><strong>Tags:</strong> {" ".join(f'<span class="tag" onclick="filterByTag(\'{tag.strip()}\')">{tag.strip()}</span>' for tag in tags.split(","))}</p>
+            </div>
+        """
+
+    # Combine all parts and write to file
+    with open(output_file, 'w', encoding='utf-8') as file:
+        file.write(html_start + html_cards + html_end)
+
+# Main script
+def main():
+    input_file = "data/bookmark.taia"
+    output_file = "bookmark.html"
+    
+    if not os.path.exists(input_file):
+        print(f"Error: {input_file} not found!")
+        return
+    
+    entries = parse_taia_file(input_file)
+    if not entries:
+        print("No entries found in the .taia file!")
+        return
+    
+    generate_html(entries, output_file)
+    print(f"HTML file generated: {output_file}")
+
+if __name__ == "__main__":
+    main()
