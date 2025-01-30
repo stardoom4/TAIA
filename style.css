@@ -71,7 +71,7 @@ ul ul {
 }
 
 p {
-  line-height: 16px;
+  line-height: 22px;
 }
 
 a {
@@ -102,9 +102,8 @@ q {
 }
 
 img {
-  max-width: 100%;
-  display: inline-block;
-  margin: -20 -20 25px;
+  width: 100%;
+  height: auto;
 }
 
 
