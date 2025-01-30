@@ -339,7 +339,7 @@ def generate_search_index(entries, microblog_entries, output_dir):
 
 
 # Example usage
-generate_html_from_taia('database/lexicon.taia', 'output_pages', 'database/microblog.taia')
+generate_html_from_taia('database/chronicle.taia', 'output_pages', 'database/microblog.taia')
 
 # Function to parse the .taia file
 def parse_taia_file(filepath):
