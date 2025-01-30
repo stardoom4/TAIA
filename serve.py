@@ -406,7 +406,7 @@ def generate_html(entries, output_file):
 # Main script
 def main():
     input_file = "database/bookmark.taia"
-    output_file = "bookmark.html"
+    output_file = "output_pages/bookmark.html"
     
     if not os.path.exists(input_file):
         print(f"Error: {input_file} not found!")
