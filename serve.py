@@ -88,7 +88,9 @@ def generate_tag_pages(entries, output_dir):
 <div class="sidebar">
     <nav>
         <ul>
-            <a href="microblog_page_1.html">Home</a>
+            <a href="home.html">Home</a>
+            <a href="microblog_page_1.html">Microblog</a>
+            <a href="bookmark.html">Bookmarks</a>
             {generate_category_navigation(entries, None)}
         </ul>
     </nav>
@@ -162,7 +164,8 @@ def generate_html_file(entry, entries, output_dir):
 <div class="sidebar">
     <nav>
         <ul>
-            <a href="microblog_page_1.html">Home</a><br>
+            <a href="home.html">Home</a>
+            <a href="microblog_page_1.html">Microblog</a><br>
             <a href="bookmark.html">Bookmarks</a>
             {generate_category_navigation(entries, entry)}
         </ul>
@@ -253,7 +256,9 @@ def generate_microblog_page(microblog_entries, entries, output_dir):
 <ul id="searchResults"></ul><button class="toggle-btn" aria-label="Toggle Sidebar">☰</button>
 <div class="sidebar">
     <nav>
-        <ul>
+        <ul> 
+            <a href="home.html">Home</a>
+            <a href="bookmark.html">Bookmarks</a>
             {generate_category_navigation(entries, None)}  <!-- Include all master pages -->
         </ul>
     </nav>
