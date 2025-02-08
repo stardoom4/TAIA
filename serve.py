@@ -74,7 +74,7 @@ def generate_tag_pages(entries, output_dir):
 
     # Generate a page for each tag
     for tag in all_tags:
-        html_content = f"""<html>
+        html_content = f"""
 <!DOCTYPE html>
 <head>
 <meta charset="UTF-8">
@@ -150,7 +150,7 @@ def generate_html_file(entry, entries, output_dir):
     tags = entry.get('TAGS', '').split(',')  # Get tags, split by comma
 
     # Generate the navigation menu with dynamic visibility for second master and subpages
-    html_content = f"""<html>
+    html_content = f"""
 <!DOCTYPE html>
 <head>
 <meta charset="UTF-8">
@@ -243,7 +243,7 @@ def generate_microblog_page(microblog_entries, entries, output_dir):
         end_idx = start_idx + pagination_size
         page_entries = microblog_entries[start_idx:end_idx]
 
-        html_content = f"""<html>
+        html_content = f"""
 <!DOCTYPE html>       
 <head>
 <meta charset="UTF-8">
