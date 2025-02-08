@@ -34,37 +34,6 @@ def generate_html_from_taia(file_path, output_dir, microblog_file):
     if os.path.exists(first_microblog_page_path):
         shutil.copy(first_microblog_page_path, index_path)
 
-def generate_subpage_links(entry, entries):
-    """
-    Generates a list of links to subpages for a given master page.
-    """
-    subpages = [e for e in entries if e.get('UNDE') == entry['TITL']]
-    if not subpages:
-        return ""
-
-    subpage_links = '<h2>Subpages:</h2><ul>'
-    for subpage in subpages:
-        subpage_filename = f"{subpage['TITL'].replace(' ', '_').lower()}.html"
-        subpage_links += f'<li><a href="{subpage_filename}">{subpage["TITL"]}</a></li>'
-    subpage_links += '</ul>'
-    
-    return subpage_links
-
-def generate_breadcrumbs(entry, entries):
-    """
-    Generates breadcrumb navigation for a given entry.
-    """
-    breadcrumbs = []
-    while entry.get('UNDE'):
-        parent_title = entry['UNDE']
-        parent_filename = f"{parent_title.replace(' ', '_').lower()}.html"
-        breadcrumbs.insert(0, f'<a href="{parent_filename}">{parent_title}</a>')
-        entry = next((e for e in entries if e['TITL'] == parent_title), None)
-        if not entry:
-            break
-
-    return " → ".join(breadcrumbs) if breadcrumbs else ""
-
 def format_text(text):
     """
     Parses custom syntax in the text and returns HTML.
@@ -96,12 +65,14 @@ def format_text(text):
     return text
 
 def generate_tag_pages(entries, output_dir):
+    # Create a set of unique tags
     all_tags = set()
     for entry in entries:
         tags = entry.get('TAGS', '')
         for tag in tags.split(','):
-            all_tags.add(tag.strip().lower())
+            all_tags.add(tag.strip().lower())  # Normalize and add to the set
 
+    # Generate a page for each tag
     for tag in all_tags:
         html_content = f"""<html>
 <!DOCTYPE html>
@@ -120,7 +91,7 @@ def generate_tag_pages(entries, output_dir):
             <a href="microblog_page_1.html">Microblog</a><br>
             <a href="bookmark.html">Bookmarks</a>
             <hr>
-            {generate_category_navigation(entries, None)}  <!-- Dynamic Navigation -->
+            {generate_category_navigation(entries, None)}
         </ul>
     </nav>
 </div>
@@ -140,6 +111,7 @@ def generate_tag_pages(entries, output_dir):
         tag_file_name = f"tag_{tag}.html"
         with open(os.path.join(output_dir, tag_file_name), 'w') as html_file:
             html_file.write(html_content)
+
 
 def generate_tagged_entries(entries, tag):
     # Find all entries that have the specified tag
@@ -177,6 +149,7 @@ def generate_html_file(entry, entries, output_dir):
     description = format_text(entry.get('DESC', 'No content available.'))
     tags = entry.get('TAGS', '').split(',')  # Get tags, split by comma
 
+    # Generate the navigation menu with dynamic visibility for second master and subpages
     html_content = f"""<html>
 <!DOCTYPE html>
 <head>
@@ -194,7 +167,7 @@ def generate_html_file(entry, entries, output_dir):
             <a href="microblog_page_1.html">Microblog</a><br>
             <a href="bookmark.html">Bookmarks</a>
             <hr>
-            {generate_category_navigation(entries, entry)}  <!-- Dynamic Navigation -->
+            {generate_category_navigation(entries, entry)}
         </ul>
     </nav>
 </div>
@@ -211,29 +184,36 @@ def generate_html_file(entry, entries, output_dir):
 </html>
 """
 
+    # Save the HTML file with the title as the filename
     file_name = f"{title.replace(' ', '_').lower()}.html"
     with open(os.path.join(output_dir, file_name), 'w') as html_file:
         html_file.write(html_content)
+
 
 def generate_category_navigation(entries, current_entry):
     nav_links = []
     current_master_title = None
 
+    # If `current_entry` is not None, get its master title
     if current_entry:
         current_master_title = current_entry.get('UNDE')
 
+    # Get all master pages
     master_pages = [entry for entry in entries if 'UNDE' not in entry]
 
     for master_entry in master_pages:
         master_title = master_entry['TITL']
         master_file_name = f"{master_title.replace(' ', '_').lower()}.html"
 
+        # Add link for the master page
         nav_links.append(f'<li><a href="{master_file_name}">{master_title}</a></li>')
 
+        # Check if this master page is the current page or its parent
         is_current_master = current_entry and (
             master_entry == current_entry or master_title == current_master_title
         )
 
+        # Generate navigation for second-level masters and subpages
         if is_current_master:
             second_master_pages = [entry for entry in entries if entry.get('UNDE') == master_title]
 
@@ -242,6 +222,7 @@ def generate_category_navigation(entries, current_entry):
                 second_master_file_name = f"{second_master_title.replace(' ', '_').lower()}.html"
                 nav_links.append(f'<li style="margin-left:20px;"><a href="{second_master_file_name}">{second_master_title}</a></li>')
 
+                # Generate navigation for subpages
                 sub_pages = [entry for entry in entries if entry.get('UNDE') == second_master_title]
                 if sub_pages:
                     sub_nav_links = [
@@ -251,6 +232,7 @@ def generate_category_navigation(entries, current_entry):
                     nav_links.append('<ul>' + ''.join(sub_nav_links) + '</ul>')
 
     return "\n".join(nav_links)
+
 
 def generate_microblog_page(microblog_entries, entries, output_dir):
     pagination_size = 16  # Show 16 posts per page
@@ -277,7 +259,7 @@ def generate_microblog_page(microblog_entries, entries, output_dir):
         <ul> 
             <a href="bookmark.html">Bookmarks</a>
             <hr>
-            {generate_category_navigation(entries, None)}  <!-- Dynamic Navigation -->
+            {generate_category_navigation(entries, None)}  <!-- Include all master pages -->
         </ul>
     </nav>
 </div>
@@ -295,10 +277,11 @@ def generate_microblog_page(microblog_entries, entries, output_dir):
 </body>
 </html>
 """
-
+        # Save the microblog page with pagination
         file_name = f"microblog_page_{page_num}.html"
         with open(os.path.join(output_dir, file_name), 'w') as html_file:
             html_file.write(html_content)
+
 
 def generate_microblog_feed(entries):
     feed_content = ''
