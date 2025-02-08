@@ -96,14 +96,12 @@ def format_text(text):
     return text
 
 def generate_tag_pages(entries, output_dir):
-    # Create a set of unique tags
     all_tags = set()
     for entry in entries:
         tags = entry.get('TAGS', '')
         for tag in tags.split(','):
-            all_tags.add(tag.strip().lower())  # Normalize and add to the set
+            all_tags.add(tag.strip().lower())
 
-    # Generate a page for each tag
     for tag in all_tags:
         html_content = f"""<html>
 <!DOCTYPE html>
@@ -122,7 +120,7 @@ def generate_tag_pages(entries, output_dir):
             <a href="microblog_page_1.html">Microblog</a><br>
             <a href="bookmark.html">Bookmarks</a>
             <hr>
-            {generate_category_navigation(entries, None)}
+            {generate_category_navigation(entries, None)}  <!-- Dynamic Navigation -->
         </ul>
     </nav>
 </div>
@@ -142,7 +140,6 @@ def generate_tag_pages(entries, output_dir):
         tag_file_name = f"tag_{tag}.html"
         with open(os.path.join(output_dir, tag_file_name), 'w') as html_file:
             html_file.write(html_content)
-
 
 def generate_tagged_entries(entries, tag):
     # Find all entries that have the specified tag
@@ -180,8 +177,7 @@ def generate_html_file(entry, entries, output_dir):
     description = format_text(entry.get('DESC', 'No content available.'))
     tags = entry.get('TAGS', '').split(',')  # Get tags, split by comma
 
-    # Generate the navigation menu with dynamic visibility for second master and subpages
-    html_content = f"""
+    html_content = f"""<html>
 <!DOCTYPE html>
 <head>
 <meta charset="UTF-8">
@@ -192,19 +188,16 @@ def generate_html_file(entry, entries, output_dir):
 <body>
 <input type="text" id="searchInput" placeholder="Search..." onkeyup="searchPages()">
 <ul id="searchResults"></ul><button class="toggle-btn" aria-label="Toggle Sidebar">☰</button>
-{global_nav}  
-{breadcrumbs}  
 <div class="sidebar">
     <nav>
         <ul>
             <a href="microblog_page_1.html">Microblog</a><br>
             <a href="bookmark.html">Bookmarks</a>
             <hr>
-            {generate_category_navigation(entries, entry)}
+            {generate_category_navigation(entries, entry)}  <!-- Dynamic Navigation -->
         </ul>
     </nav>
 </div>
-{subpage_links}  
 <div class="content">
     <h1>{title}</h1>
     <p>Tags: {', '.join([f'<a href="tag_{tag.strip().lower()}.html">{tag.strip()}</a>' for tag in tags])}</p>  <!-- Clickable tags -->
@@ -218,21 +211,46 @@ def generate_html_file(entry, entries, output_dir):
 </html>
 """
 
-    # Save the HTML file with the title as the filename
     file_name = f"{title.replace(' ', '_').lower()}.html"
     with open(os.path.join(output_dir, file_name), 'w') as html_file:
         html_file.write(html_content)
 
+def generate_category_navigation(entries, current_entry):
+    nav_links = []
+    current_master_title = None
 
-def generate_global_nav(entries):
-    """
-    Generates a global navigation menu with top-level pages.
-    """
+    if current_entry:
+        current_master_title = current_entry.get('UNDE')
+
     master_pages = [entry for entry in entries if 'UNDE' not in entry]
-    nav_links = [f'<li><a href="{entry["TITL"].replace(" ", "_").lower()}.html">{entry["TITL"]}</a></li>'
-                 for entry in master_pages]
-    
-    return f'<nav><ul>{"".join(nav_links)}</ul></nav>'
+
+    for master_entry in master_pages:
+        master_title = master_entry['TITL']
+        master_file_name = f"{master_title.replace(' ', '_').lower()}.html"
+
+        nav_links.append(f'<li><a href="{master_file_name}">{master_title}</a></li>')
+
+        is_current_master = current_entry and (
+            master_entry == current_entry or master_title == current_master_title
+        )
+
+        if is_current_master:
+            second_master_pages = [entry for entry in entries if entry.get('UNDE') == master_title]
+
+            for second_master in second_master_pages:
+                second_master_title = second_master['TITL']
+                second_master_file_name = f"{second_master_title.replace(' ', '_').lower()}.html"
+                nav_links.append(f'<li style="margin-left:20px;"><a href="{second_master_file_name}">{second_master_title}</a></li>')
+
+                sub_pages = [entry for entry in entries if entry.get('UNDE') == second_master_title]
+                if sub_pages:
+                    sub_nav_links = [
+                        f'<li style="margin-left:40px;"><a href="{entry["TITL"].replace(" ", "_").lower()}.html">{entry["TITL"]}</a></li>'
+                        for entry in sub_pages
+                    ]
+                    nav_links.append('<ul>' + ''.join(sub_nav_links) + '</ul>')
+
+    return "\n".join(nav_links)
 
 def generate_microblog_page(microblog_entries, entries, output_dir):
     pagination_size = 16  # Show 16 posts per page
@@ -259,7 +277,7 @@ def generate_microblog_page(microblog_entries, entries, output_dir):
         <ul> 
             <a href="bookmark.html">Bookmarks</a>
             <hr>
-            {generate_category_navigation(entries, None)}  <!-- Include all master pages -->
+            {generate_category_navigation(entries, None)}  <!-- Dynamic Navigation -->
         </ul>
     </nav>
 </div>
@@ -277,11 +295,10 @@ def generate_microblog_page(microblog_entries, entries, output_dir):
 </body>
 </html>
 """
-        # Save the microblog page with pagination
+
         file_name = f"microblog_page_{page_num}.html"
         with open(os.path.join(output_dir, file_name), 'w') as html_file:
             html_file.write(html_content)
-
 
 def generate_microblog_feed(entries):
     feed_content = ''
