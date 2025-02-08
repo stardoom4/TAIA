@@ -34,6 +34,37 @@ def generate_html_from_taia(file_path, output_dir, microblog_file):
     if os.path.exists(first_microblog_page_path):
         shutil.copy(first_microblog_page_path, index_path)
 
+def generate_subpage_links(entry, entries):
+    """
+    Generates a list of links to subpages for a given master page.
+    """
+    subpages = [e for e in entries if e.get('UNDE') == entry['TITL']]
+    if not subpages:
+        return ""
+
+    subpage_links = '<h2>Subpages:</h2><ul>'
+    for subpage in subpages:
+        subpage_filename = f"{subpage['TITL'].replace(' ', '_').lower()}.html"
+        subpage_links += f'<li><a href="{subpage_filename}">{subpage["TITL"]}</a></li>'
+    subpage_links += '</ul>'
+    
+    return subpage_links
+
+def generate_breadcrumbs(entry, entries):
+    """
+    Generates breadcrumb navigation for a given entry.
+    """
+    breadcrumbs = []
+    while entry.get('UNDE'):
+        parent_title = entry['UNDE']
+        parent_filename = f"{parent_title.replace(' ', '_').lower()}.html"
+        breadcrumbs.insert(0, f'<a href="{parent_filename}">{parent_title}</a>')
+        entry = next((e for e in entries if e['TITL'] == parent_title), None)
+        if not entry:
+            break
+
+    return " → ".join(breadcrumbs) if breadcrumbs else ""
+
 def format_text(text):
     """
     Parses custom syntax in the text and returns HTML.
@@ -150,7 +181,7 @@ def generate_html_file(entry, entries, output_dir):
     tags = entry.get('TAGS', '').split(',')  # Get tags, split by comma
 
     # Generate the navigation menu with dynamic visibility for second master and subpages
-    html_content = f"""<html>
+    html_content = f"""
 <!DOCTYPE html>
 <head>
 <meta charset="UTF-8">
@@ -161,6 +192,8 @@ def generate_html_file(entry, entries, output_dir):
 <body>
 <input type="text" id="searchInput" placeholder="Search..." onkeyup="searchPages()">
 <ul id="searchResults"></ul><button class="toggle-btn" aria-label="Toggle Sidebar">☰</button>
+{global_nav}  
+{breadcrumbs}  
 <div class="sidebar">
     <nav>
         <ul>
@@ -171,6 +204,7 @@ def generate_html_file(entry, entries, output_dir):
         </ul>
     </nav>
 </div>
+{subpage_links}  
 <div class="content">
     <h1>{title}</h1>
     <p>Tags: {', '.join([f'<a href="tag_{tag.strip().lower()}.html">{tag.strip()}</a>' for tag in tags])}</p>  <!-- Clickable tags -->
@@ -190,49 +224,15 @@ def generate_html_file(entry, entries, output_dir):
         html_file.write(html_content)
 
 
-def generate_category_navigation(entries, current_entry):
-    nav_links = []
-    current_master_title = None
-
-    # If `current_entry` is not None, get its master title
-    if current_entry:
-        current_master_title = current_entry.get('UNDE')
-
-    # Get all master pages
+def generate_global_nav(entries):
+    """
+    Generates a global navigation menu with top-level pages.
+    """
     master_pages = [entry for entry in entries if 'UNDE' not in entry]
-
-    for master_entry in master_pages:
-        master_title = master_entry['TITL']
-        master_file_name = f"{master_title.replace(' ', '_').lower()}.html"
-
-        # Add link for the master page
-        nav_links.append(f'<li><a href="{master_file_name}">{master_title}</a></li>')
-
-        # Check if this master page is the current page or its parent
-        is_current_master = current_entry and (
-            master_entry == current_entry or master_title == current_master_title
-        )
-
-        # Generate navigation for second-level masters and subpages
-        if is_current_master:
-            second_master_pages = [entry for entry in entries if entry.get('UNDE') == master_title]
-
-            for second_master in second_master_pages:
-                second_master_title = second_master['TITL']
-                second_master_file_name = f"{second_master_title.replace(' ', '_').lower()}.html"
-                nav_links.append(f'<li style="margin-left:20px;"><a href="{second_master_file_name}">{second_master_title}</a></li>')
-
-                # Generate navigation for subpages
-                sub_pages = [entry for entry in entries if entry.get('UNDE') == second_master_title]
-                if sub_pages:
-                    sub_nav_links = [
-                        f'<li style="margin-left:40px;"><a href="{entry["TITL"].replace(" ", "_").lower()}.html">{entry["TITL"]}</a></li>'
-                        for entry in sub_pages
-                    ]
-                    nav_links.append('<ul>' + ''.join(sub_nav_links) + '</ul>')
-
-    return "\n".join(nav_links)
-
+    nav_links = [f'<li><a href="{entry["TITL"].replace(" ", "_").lower()}.html">{entry["TITL"]}</a></li>'
+                 for entry in master_pages]
+    
+    return f'<nav><ul>{"".join(nav_links)}</ul></nav>'
 
 def generate_microblog_page(microblog_entries, entries, output_dir):
     pagination_size = 16  # Show 16 posts per page
