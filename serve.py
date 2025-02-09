@@ -130,7 +130,6 @@ def main():
             print(f"  - {child}")
 
     generate_html(entries, tree)
-    generate_index(tree)
 
     # 🔴 Debugging: Check if all pages were generated
     print("\n=== Generated Pages ===")
