@@ -109,13 +109,6 @@ def generate_html(entries, tree):
 
     print("✅ HTML pages successfully generated!")
 
-def generate_index(tree):
-    """Generates the main index page with navigation."""
-    full_nav = generate_nav(tree, None)
-    
-    with open(os.path.join(OUTPUT_DIR, "index.html"), "w", encoding="utf-8") as f:
-        f.write(index_content)
-
 def main():
     """Main function to generate the static wiki."""
     entries = parse_taia(INPUT_FILE)
