@@ -6,13 +6,7 @@ from collections import defaultdict
 # Configuration
 INPUT_FILE = "database/chronicle.taia"  # The .taia file containing wiki entries
 OUTPUT_DIR = "output_pages"   # Directory to store generated HTML files
-
-# Ensure the output directory exists
-os.makedirs(OUTPUT_DIR, exist_ok=True)
-
-# Copy CSS to output directory
-shutil.copy("style.css", os.path.join(OUTPUT_DIR, "style.css"))
-
+            
 # HTML Template
 HTML_TEMPLATE = """<!DOCTYPE html>
 <html lang="en">
@@ -20,7 +14,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{title}</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <nav>
@@ -30,24 +24,24 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     <main>
         <h1>{title}</h1>
         <p>{desc}</p>
-
-        <script>
-        document.getElementById('mobile-nav-toggle').addEventListener('click', function() {{
-            document.getElementById('sidebar').classList.toggle('open');
-            }});
-        </script>
     </main>
 </body>
 </html>
 """
 
 def parse_taia(file_path):
-    """Parses the .taia file and returns a dictionary of entries."""
     with open(file_path, "r", encoding="utf-8") as file:
-        content = file.read().strip()
+         content = file.read().strip()
 
+    print("\n=== RAW .taia CONTENT ===")
+    print(content)  # Print the file content exactly as read
+
+    """Parses the .taia file and returns a dictionary of entries."""
     entries = {}
     seen_titles = set()
+
+    with open(file_path, "r", encoding="utf-8") as file:
+        content = file.read().strip()
 
     # Regex to match TITL, UNDE, and DESC
     pattern = r"TITL:\s*(.+?)\n(?:UNDE:\s*(.+?)\n)?DESC:\s*(.+?)(?=\nTITL:|\Z)"
@@ -70,7 +64,7 @@ def parse_taia(file_path):
     return entries
 
 def build_tree(entries):
-    """Builds a hierarchical tree structure for navigation."""
+    """Builds a nested tree structure for navigation."""
     tree = defaultdict(list)
     
     for title, entry in entries.items():
@@ -79,57 +73,62 @@ def build_tree(entries):
 
     return tree
 
-def generate_nav(tree, current_parent=None, depth=0):
-    """Recursively builds the hierarchical navigation menu."""
+def generate_nav(tree, current_parent=None):
+    """Recursively builds the navigation menu for infinite levels."""
     if current_parent not in tree:
         return ""
 
-    indent = "  " * depth  # Indentation for better readability
-    nav_html = f"{indent}<ul>\n"
-    
+    nav_html = "<ul>\n"
     for child in sorted(tree[current_parent]):  # Sort for consistency
-        nav_html += f'{indent}  <li><a href="{child}.html">{child}</a>'
-        sub_nav = generate_nav(tree, child, depth + 1)  # Recursively build sub-navigation
+        nav_html += f'  <li><a href="{child}.html">{child}</a>\n'
+        sub_nav = generate_nav(tree, child)  # Recursively build child navigation
         if sub_nav:
-            nav_html += "\n" + sub_nav  # Append sub-navigation
-        nav_html += f"{indent}  </li>\n"
-
-    nav_html += f"{indent}</ul>\n"
+            nav_html += sub_nav
+        nav_html += "  </li>\n"
+    nav_html += "</ul>\n"
     return nav_html
 
 def generate_html(entries, tree):
-    """Generates an HTML page for each wiki entry."""
+    """Generates an HTML page for each wiki entry, setting 'Index' as homepage."""
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
     for title, entry in entries.items():
         desc = entry["desc"]
         nav = generate_nav(tree, None)  # Generate hierarchical navigation
 
-        # Ensure "Index" becomes "index.html"
+        html_content = HTML_TEMPLATE.format(title=title, desc=desc, nav=nav)
+
+        # If the title is "Index", set filename as "index.html"
         file_name = "index.html" if title.lower() == "index" else f"{title}.html"
         file_path = os.path.join(OUTPUT_DIR, file_name)
-
-        html_content = HTML_TEMPLATE.format(title=title, desc=desc, nav=nav)
 
         with open(file_path, "w", encoding="utf-8") as f:
             f.write(html_content)
 
-def generate_index(entries, tree):
-    """Generates the main index page with hierarchical navigation."""
-    full_nav = generate_nav(tree, None)
-    
-    index_desc = entries.get("Index", {}).get("desc", "Welcome to the Wiki.")
-    index_content = HTML_TEMPLATE.format(title="Wiki Index", desc=index_desc, nav=full_nav)
+    print("✅ HTML pages successfully generated!")
 
+def generate_index(tree):
+    """Generates the main index page with navigation."""
+    full_nav = generate_nav(tree, None)
+    index_content = HTML_TEMPLATE.format(title="Wiki Index", desc="Welcome to the Wiki.", nav=full_nav)
+    
     with open(os.path.join(OUTPUT_DIR, "index.html"), "w", encoding="utf-8") as f:
         f.write(index_content)
 
 def main():
     """Main function to generate the static wiki."""
     entries = parse_taia(INPUT_FILE)
+
+    # 🔴 Debugging: Check if entries are parsed correctly
+    print("=== Parsed Entries ===")
+    for title, data in entries.items():
+        print(f"Title: {title}")
+        print(f"  Parent: {data['parent']}")
+        print(f"  Description: {data['desc']}\n")
+
     tree = build_tree(entries)
 
-    # 🔴 Debugging: Print hierarchical tree structure
+    # 🔴 Debugging: Check tree structure
     print("\n=== Tree Structure ===")
     for parent, children in tree.items():
         print(f"Parent: {parent}")
@@ -137,13 +136,12 @@ def main():
             print(f"  - {child}")
 
     generate_html(entries, tree)
-    generate_index(entries, tree)
+    generate_index(tree)
 
-    # 🔴 Debugging: Verify if all pages were generated
+    # 🔴 Debugging: Check if all pages were generated
     print("\n=== Generated Pages ===")
     for title in entries:
-        file_name = "index.html" if title.lower() == "index" else f"{title}.html"
-        file_path = os.path.join(OUTPUT_DIR, file_name)
+        file_path = os.path.join(OUTPUT_DIR, f"{title}.html")
         if os.path.exists(file_path):
             print(f"✅ {file_path}")
         else:
