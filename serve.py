@@ -30,14 +30,14 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     <main>
         <h1>{title}</h1>
         <p>{desc}</p>
-    </main>
-</body>
-    <script>
-        // Mobile Navigation Toggle
+
+        <script>
         document.getElementById('mobile-nav-toggle').addEventListener('click', function() {
             document.getElementById('sidebar').classList.toggle('open');
-        });
-    </script>
+            }});
+        </script>
+    </main>
+</body>
 </html>
 """
 
