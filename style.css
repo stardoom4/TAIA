@@ -9,10 +9,18 @@ body {
 
 /* Main Content */
 main {
-    margin-left: 44px; /* Leave space for the nav */
     padding: 20px;
 }
 
+a{
+    text-decoration: none;
+}
+ul{
+    list-style: none;
+}
+nav{
+    padding: 20px;
+}
 /* Small Screen: Hide Sidebar and Show Toggle Button */
 @media (max-width: 800px) {
     main {
