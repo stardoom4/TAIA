@@ -1,6 +1,5 @@
 import os
 import re
-import json
 from collections import defaultdict
 
 # Configuration
@@ -52,6 +51,7 @@ def build_tree(entries):
     tree = defaultdict(list)
     index = {}
 
+    # Create a dictionary for entries and their hierarchical relationships
     for entry in entries:
         index[entry["title"]] = entry  # Store entries in a dictionary
         tree[entry["parent"]].append(entry["title"])  # Create hierarchy
@@ -74,9 +74,10 @@ def generate_nav(tree, current_title=None):
     return nav_html
 
 def generate_html(tree, index):
-    """Generates HTML pages for all entries, ensuring all pages exist."""
+    """Generates HTML pages for all entries."""
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
+    # Generate HTML for every entry, including those deeply nested
     for title, entry in index.items():
         desc = entry["desc"]
         nav = generate_nav(tree, None)  # Use full navigation for every page
