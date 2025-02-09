@@ -23,7 +23,8 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <nav>
+    <button id="mobile-nav-toggle">☰ Menu</button>
+    <nav id="sidebar">
         <h2>Navigation</h2>
         {nav}
     </nav>
@@ -32,6 +33,12 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         <p>{desc}</p>
     </main>
 </body>
+    <script>
+        // Mobile Navigation Toggle
+        document.getElementById('mobile-nav-toggle').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.toggle('open');
+        });
+    </script>
 </html>
 """
 
@@ -39,9 +46,6 @@ def parse_taia(file_path):
     """Parses the .taia file and returns a dictionary of entries."""
     with open(file_path, "r", encoding="utf-8") as file:
         content = file.read().strip()
-
-    print("\n=== RAW .taia CONTENT ===")
-    print(content)  # Print the file content exactly as read
 
     entries = {}
     seen_titles = set()
@@ -67,7 +71,7 @@ def parse_taia(file_path):
     return entries
 
 def build_tree(entries):
-    """Builds a nested tree structure for navigation."""
+    """Builds a hierarchical tree structure for navigation."""
     tree = defaultdict(list)
     
     for title, entry in entries.items():
@@ -76,19 +80,22 @@ def build_tree(entries):
 
     return tree
 
-def generate_nav(tree, current_parent=None):
-    """Recursively builds the navigation menu for infinite levels."""
+def generate_nav(tree, current_parent=None, depth=0):
+    """Recursively builds the hierarchical navigation menu."""
     if current_parent not in tree:
         return ""
 
-    nav_html = "<ul>\n"
+    indent = "  " * depth  # Indentation for better readability
+    nav_html = f"{indent}<ul>\n"
+    
     for child in sorted(tree[current_parent]):  # Sort for consistency
-        nav_html += f'  <li><a href="{child}.html">{child}</a>\n'
-        sub_nav = generate_nav(tree, child)  # Recursively build child navigation
+        nav_html += f'{indent}  <li><a href="{child}.html">{child}</a>'
+        sub_nav = generate_nav(tree, child, depth + 1)  # Recursively build sub-navigation
         if sub_nav:
-            nav_html += sub_nav
-        nav_html += "  </li>\n"
-    nav_html += "</ul>\n"
+            nav_html += "\n" + sub_nav  # Append sub-navigation
+        nav_html += f"{indent}  </li>\n"
+
+    nav_html += f"{indent}</ul>\n"
     return nav_html
 
 def generate_html(entries, tree):
@@ -97,7 +104,7 @@ def generate_html(entries, tree):
 
     for title, entry in entries.items():
         desc = entry["desc"]
-        nav = generate_nav(tree, None)  # Use full navigation on every page
+        nav = generate_nav(tree, None)  # Generate hierarchical navigation
 
         # Ensure "Index" becomes "index.html"
         file_name = "index.html" if title.lower() == "index" else f"{title}.html"
@@ -108,10 +115,12 @@ def generate_html(entries, tree):
         with open(file_path, "w", encoding="utf-8") as f:
             f.write(html_content)
 
-def generate_index(tree):
-    """Generates the main index page with navigation."""
+def generate_index(entries, tree):
+    """Generates the main index page with hierarchical navigation."""
     full_nav = generate_nav(tree, None)
-    index_content = HTML_TEMPLATE.format(title="Wiki Index", desc="Welcome to the Wiki.", nav=full_nav)
+    
+    index_desc = entries.get("Index", {}).get("desc", "Welcome to the Wiki.")
+    index_content = HTML_TEMPLATE.format(title="Wiki Index", desc=index_desc, nav=full_nav)
 
     with open(os.path.join(OUTPUT_DIR, "index.html"), "w", encoding="utf-8") as f:
         f.write(index_content)
@@ -119,17 +128,9 @@ def generate_index(tree):
 def main():
     """Main function to generate the static wiki."""
     entries = parse_taia(INPUT_FILE)
-
-    # 🔴 Debugging: Check if entries are parsed correctly
-    print("=== Parsed Entries ===")
-    for title, data in entries.items():
-        print(f"Title: {title}")
-        print(f"  Parent: {data['parent']}")
-        print(f"  Description: {data['desc']}\n")
-
     tree = build_tree(entries)
 
-    # 🔴 Debugging: Check tree structure
+    # 🔴 Debugging: Print hierarchical tree structure
     print("\n=== Tree Structure ===")
     for parent, children in tree.items():
         print(f"Parent: {parent}")
@@ -137,9 +138,9 @@ def main():
             print(f"  - {child}")
 
     generate_html(entries, tree)
-    generate_index(tree)
+    generate_index(entries, tree)
 
-    # 🔴 Debugging: Check if all pages were generated
+    # 🔴 Debugging: Verify if all pages were generated
     print("\n=== Generated Pages ===")
     for title in entries:
         file_name = "index.html" if title.lower() == "index" else f"{title}.html"
