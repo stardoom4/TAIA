@@ -32,7 +32,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         <p>{desc}</p>
 
         <script>
-        document.getElementById('mobile-nav-toggle').addEventListener('click', function() {
+        document.getElementById('mobile-nav-toggle').addEventListener('click', function() {{
             document.getElementById('sidebar').classList.toggle('open');
             }});
         </script>
