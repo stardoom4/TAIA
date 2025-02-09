@@ -8,7 +8,7 @@ INPUT_FILE = "database/chronicle.taia"  # The .taia file containing wiki entries
 OUTPUT_DIR = "output_pages"   # Directory to store generated HTML files
 
 # Ensure the output directory exists
-os.makedirs(output_dir, exist_ok=True)
+os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 # Copy CSS to output directory
 shutil.copy("style.css", os.path.join(output_dir, "style.css"))
