@@ -43,7 +43,7 @@ def parse_taia(file_path):
         content = file.read().strip()
 
     # Regex to match TITL, UNDE, and DESC
-    pattern = r"TITL:\s*(.+?)\n(?:UNDE:\s*(.+?)\n)?DESC:\s*(.+?)\n\n?"
+    pattern = r"TITL:\s*(.+?)\n(?:UNDE:\s*(.+?)\n)?DESC:\s*(.+?)(?=\nTITL:|\Z)"
     matches = re.findall(pattern, content, re.DOTALL)
 
     for match in matches:
