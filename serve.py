@@ -113,7 +113,7 @@ def generate_nav(entries, tree, current_page):
 
     # 🔹 Show the immediate children of the current page (if any exist)
     if current_page in tree:
-        nav_html += "<ul>\n"
+        nav_html += "<hr><ul>\n"
         for child in sorted(tree[current_page]):
             nav_html += f'  <li><a href="{child}.html">{child}</a></li>\n'
         nav_html += "</ul>\n"
