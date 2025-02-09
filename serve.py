@@ -6,7 +6,23 @@ from collections import defaultdict
 # Configuration
 INPUT_FILE = "database/chronicle.taia"  # The .taia file containing wiki entries
 OUTPUT_DIR = "output_pages"   # Directory to store generated HTML files
-            
+
+# Ensure the output directory exists
+os.makedirs(output_dir, exist_ok=True)
+
+# Copy CSS to output directory
+shutil.copy("style.css", os.path.join(output_dir, "style.css"))
+
+# Save "Index" entry as index.html
+if title == "Index":
+    file_name = "index.html"
+else:
+    file_name = f"{title}.html"
+
+# Save the file
+with open(os.path.join(output_dir, file_name), "w", encoding="utf-8") as f:
+    f.write(html_content)
+
 # HTML Template
 HTML_TEMPLATE = """<!DOCTYPE html>
 <html lang="en">
@@ -14,7 +30,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{title}</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <nav>
