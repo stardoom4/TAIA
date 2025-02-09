@@ -73,20 +73,18 @@ def build_tree(entries):
 
     return tree
 
-def generate_nav(tree, current_parent=None):
-    """Recursively builds the navigation menu for infinite levels."""
+def generate_nav(tree, current_parent):
+    """Generates navigation for a specific page, showing only direct subpages."""
     if current_parent not in tree:
-        return ""
+        return ""  # No children, return empty
 
     nav_html = "<ul>\n"
-    for child in sorted(tree[current_parent]):  # Sort for consistency
-        nav_html += f'  <li><a href="{child}.html">{child}</a>\n'
-        sub_nav = generate_nav(tree, child)  # Recursively build child navigation
-        if sub_nav:
-            nav_html += sub_nav
-        nav_html += "  </li>\n"
+    for child in sorted(tree[current_parent]):  # Sort for consistent order
+        nav_html += f'  <li><a href="{child}.html">{child}</a></li>\n'
     nav_html += "</ul>\n"
+    
     return nav_html
+
 
 def generate_html(entries, tree):
     """Generates an HTML page for each wiki entry with a limited navigation."""
