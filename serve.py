@@ -23,8 +23,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <button id="mobile-nav-toggle">☰ Menu</button>
-    <nav id="sidebar">
+    <nav>
         <h2>Navigation</h2>
         {nav}
     </nav>
