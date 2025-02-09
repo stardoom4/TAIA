@@ -1,29 +1,17 @@
-TITL: Home
-DESC: <h2>Home</h2><p>(link "https://github.com" "Github")</p>
-
-TITL: Wiki 
-DESC: <p>This is the master page. It contains links to subpages.</p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Le%C3%B3nidas_en_las_Term%C3%B3pilas%2C_por_Jacques-Louis_David.jpg/800px-Le%C3%B3nidas_en_las_Term%C3%B3pilas%2C_por_Jacques-Louis_David.jpg">
-
 TITL: Faora
-DESC: (link "https://github.com/stardoom4/Faora" "Faora") is a Static wiki generator with a microblog as the front page. Like (link "https://github.com/xxiivv/oscean" "Oscean"), the content of the site + the microblog is extracted from two .taia files. Faora uses (link "maia.html" "Maia") as a simple template system.
-TAGS: Tools
+DESC: Faora is a meta-template system designed to handle hierarchical templates.
 
-TITL: Maia 
+TITL: Maia
 UNDE: Faora
 DESC: Maia is a simple template system inspired from (link "https://mboxed.github.io/forida/#heol" "Heol"), the syntax is same as Heol.
 
-TITL: Computer
-UNDE: Wiki
-DESC: Computer Wiki
+TITL: Heol
+UNDE: Maia
+DESC: Heol is a lightweight templating language used in various projects.
 
-TITL: Binary
-UNDE: Computer
-DESC: <strong>I am still learing this</strong>.<br>Binary or Base-2 number which uses only 1 and 0 to represent different ASCII chrachters.<br>Like for representing "H" which corresponds to number "72" in ASCII , the Binary for it is "01001000".<br>Just like base-10 , in base-2 we start with taking digit in ones place as 2^0 and add the powers to 2 to get the ASCII number.<br><code>0x2^7 + 1x2^6 + 0x(2^5 + 2^4) + 1x2^3 + 0x(2^2 + 2^1 + 2^0)</code><br><p>Adding the above gives "72", which means "H" in ASCII.</p>
+TITL: Nova
+DESC: Nova is an independent system, not under any hierarchy.
 
-TITL: Python
-UNDE: Computer
-DESC: Python Wiki
-
-TITL: Strings
-UNDE: Python
-DESC: Strings in Pythons.
+TITL: Astra
+UNDE: Faora
+DESC: Astra is another child of Faora.
