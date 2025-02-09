@@ -89,23 +89,19 @@ def generate_nav(tree, current_parent=None):
     return nav_html
 
 def generate_html(entries, tree):
-    """Generates an HTML page for each wiki entry, setting 'Index' as homepage."""
+    """Generates an HTML page for each wiki entry with a limited navigation."""
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
     for title, entry in entries.items():
         desc = entry["desc"]
-        nav = generate_nav(tree, None)  # Generate hierarchical navigation
-
-        # If "Index" exists, set filename as "index.html"
-        file_name = "index.html" if title.strip().lower() == "index" else f"{title}.html"
-        file_path = os.path.join(OUTPUT_DIR, file_name)
-
-        print(f"🔍 Processing: {title} -> {file_name}")  # Debugging output
+        nav = generate_nav(tree, title)  # Only show direct subpages
 
         html_content = HTML_TEMPLATE.format(title=title, desc=desc, nav=nav)
+        file_path = os.path.join(OUTPUT_DIR, f"{title}.html")
 
         with open(file_path, "w", encoding="utf-8") as f:
             f.write(html_content)
+
 
     print("✅ HTML pages successfully generated!")
 
