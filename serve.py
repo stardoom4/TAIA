@@ -5,7 +5,7 @@ from collections import defaultdict
 
 # Configuration
 INPUT_FILE = "database/chronicle.taia"  # The .taia file containing wiki entries
-OUTPUT_DIR = "pages"   # Directory to store generated HTML files
+OUTPUT_DIR = "output_pages"   # Directory to store generated HTML files
 
 # HTML Template
 HTML_TEMPLATE = """<!DOCTYPE html>
