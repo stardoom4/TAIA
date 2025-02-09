@@ -6,14 +6,6 @@ from collections import defaultdict
 INPUT_FILE = "database/chronicle.taia"  # The .taia file containing wiki entries
 OUTPUT_DIR = "output_pages"   # Directory to store generated HTML files
 
-entries = parse_taia(INPUT_FILE)
-
-print("=== Parsed Entries ===")
-for title, data in entries.items():
-    print(f"Title: {title}")
-    print(f"  Parent: {data['parent']}")
-    print(f"  Description: {data['desc']}\n")
-
 # HTML Template
 HTML_TEMPLATE = """<!DOCTYPE html>
 <html lang="en">
@@ -39,6 +31,8 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 def parse_taia(file_path):
     """Parses the .taia file and returns a dictionary of entries."""
     entries = {}
+    seen_titles = set()
+
     with open(file_path, "r", encoding="utf-8") as file:
         content = file.read().strip()
 
@@ -51,6 +45,13 @@ def parse_taia(file_path):
         title = title.strip()
         parent = parent.strip() if parent else None
         desc = desc.strip()
+
+        # Check for duplicate titles
+        if title in seen_titles:
+            print(f"❌ ERROR: Duplicate title detected -> {title}")
+            exit(1)
+        seen_titles.add(title)
+
         entries[title] = {"title": title, "parent": parent, "desc": desc}
 
     return entries
@@ -89,7 +90,9 @@ def generate_html(entries, tree):
         nav = generate_nav(tree, None)  # Use full navigation on every page
 
         html_content = HTML_TEMPLATE.format(title=title, desc=desc, nav=nav)
-        with open(os.path.join(OUTPUT_DIR, f"{title}.html"), "w", encoding="utf-8") as f:
+        file_path = os.path.join(OUTPUT_DIR, f"{title}.html")
+
+        with open(file_path, "w", encoding="utf-8") as f:
             f.write(html_content)
 
 def generate_index(tree):
@@ -103,10 +106,36 @@ def generate_index(tree):
 def main():
     """Main function to generate the static wiki."""
     entries = parse_taia(INPUT_FILE)
+
+    # 🔴 Debugging: Check if entries are parsed correctly
+    print("=== Parsed Entries ===")
+    for title, data in entries.items():
+        print(f"Title: {title}")
+        print(f"  Parent: {data['parent']}")
+        print(f"  Description: {data['desc']}\n")
+
     tree = build_tree(entries)
+
+    # 🔴 Debugging: Check tree structure
+    print("\n=== Tree Structure ===")
+    for parent, children in tree.items():
+        print(f"Parent: {parent}")
+        for child in children:
+            print(f"  - {child}")
+
     generate_html(entries, tree)
     generate_index(tree)
-    print("✅ Wiki successfully generated!")
+
+    # 🔴 Debugging: Check if all pages were generated
+    print("\n=== Generated Pages ===")
+    for title in entries:
+        file_path = os.path.join(OUTPUT_DIR, f"{title}.html")
+        if os.path.exists(file_path):
+            print(f"✅ {file_path}")
+        else:
+            print(f"❌ MISSING: {file_path}")
+
+    print("\n✅ Wiki successfully generated!")
 
 if __name__ == "__main__":
     main()
