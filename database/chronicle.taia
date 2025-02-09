@@ -19,3 +19,11 @@ DESC: Astra is another child of Faora.
 TITL: Eclipse
 UNDE: Heol
 DESC: Eclipse is a feature extension of Heol.
+
+TITL: Star
+UNDE: Eclipse
+DESC: Starman
+
+TITL: Earth
+UNDE: Star
+DESC: Gaia
