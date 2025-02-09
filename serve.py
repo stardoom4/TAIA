@@ -6,6 +6,11 @@ from collections import defaultdict
 INPUT_FILE = "database/chronicle.taia"  # The .taia file containing wiki entries
 OUTPUT_DIR = "output_pages"   # Directory to store generated HTML files
 
+    # Copy the style.css and script.js file to the output directory
+for file_name in ['style.css', 'script.js', 'splash.html', 'bookmark.css']:
+    if os.path.exists(file_name):
+        shutil.copy(file_name, os.path.join(OUTPUT_DIR, file_name))
+            
 # HTML Template
 HTML_TEMPLATE = """<!DOCTYPE html>
 <html lang="en">
