@@ -30,7 +30,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 """
 
 def parse_taia(file_path):
-    """Parses the .taia file and returns a dictionary of entries."""
+    """Parses the .taia file and returns a list of dictionary entries."""
     entries = []
     with open(file_path, "r", encoding="utf-8") as file:
         content = file.read().strip()
@@ -77,13 +77,11 @@ def generate_html(tree, index):
     """Generates HTML pages for all entries."""
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-    # Generate global navigation once (visible on all pages)
-    full_nav = generate_nav(tree, None)
-
     for title, entry in index.items():
         desc = entry["desc"]
-        
-        html_content = HTML_TEMPLATE.format(title=title, desc=desc, nav=full_nav)
+        nav = generate_nav(tree, None)  # Use full navigation for every page
+
+        html_content = HTML_TEMPLATE.format(title=title, desc=desc, nav=nav)
         with open(os.path.join(OUTPUT_DIR, f"{title}.html"), "w", encoding="utf-8") as f:
             f.write(html_content)
 
