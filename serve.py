@@ -30,7 +30,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 
 def parse_taia(file_path):
     with open(file_path, "r", encoding="utf-8") as file:
-    content = file.read().strip()
+         content = file.read().strip()
 
     print("\n=== RAW .taia CONTENT ===")
     print(content)  # Print the file content exactly as read
