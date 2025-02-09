@@ -72,17 +72,17 @@ def build_tree(entries):
         tree[parent].append(title)  # Add child to its parent
 
     return tree
-
-def generate_nav(tree, current_parent):
-    """Generates navigation for a specific page, showing only direct subpages."""
-    if current_parent not in tree:
-        return ""  # No children, return empty
+def generate_nav(tree, current_page):
+    """Generates navigation showing only direct subpages of the current page."""
+    if current_page not in tree:
+        return ""  # No subpages, return empty navigation
 
     nav_html = "<ul>\n"
-    for child in sorted(tree[current_parent]):  # Sort for consistent order
+    for child in sorted(tree[current_page]):  # Sort for consistency
         nav_html += f'  <li><a href="{child}.html">{child}</a></li>\n'
     nav_html += "</ul>\n"
     
+    print(f"🔍 Generating nav for {current_page}: {tree[current_page]}")  # Debugging line
     return nav_html
 
 
@@ -92,7 +92,9 @@ def generate_html(entries, tree):
 
     for title, entry in entries.items():
         desc = entry["desc"]
-        nav = generate_nav(tree, title)  # Only show direct subpages
+        nav = generate_nav(tree, title)  # Show only direct subpages
+        
+        print(f"📄 Processing: {title} -> {title}.html")  # Debugging line
 
         html_content = HTML_TEMPLATE.format(title=title, desc=desc, nav=nav)
         file_path = os.path.join(OUTPUT_DIR, f"{title}.html")
@@ -100,8 +102,15 @@ def generate_html(entries, tree):
         with open(file_path, "w", encoding="utf-8") as f:
             f.write(html_content)
 
-
-    print("✅ HTML pages successfully generated!")
+def generate_homepage(entries, tree):
+    """Generates index.html for the homepage based on the Index entry."""
+    if "Index" in entries:
+        index_desc = entries["Index"]["desc"]
+        nav = generate_nav(tree, "Index")  # Use Index as homepage nav
+        
+        index_content = HTML_TEMPLATE.format(title="Index", desc=index_desc, nav=nav)
+        with open(os.path.join(OUTPUT_DIR, "index.html"), "w", encoding="utf-8") as f:
+            f.write(index_content)
 
 def main():
     """Main function to generate the static wiki."""
