@@ -174,6 +174,7 @@ def main():
 
     generate_html(entries, tree, master_pages)
     generate_homepage(entries, tree, master_pages)
+    copy_static_files()
 
     print("\n✅ Wiki successfully generated!")
 
