@@ -105,7 +105,7 @@ def generate_nav(entries, tree, current_page):
     return nav_html
 
 
-def generate_html(entries, tree):
+def generate_html(entries, tree, master_pages):
     """Generates an HTML page for each wiki entry."""
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
