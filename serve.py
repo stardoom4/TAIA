@@ -11,7 +11,7 @@ OUTPUT_DIR = "output_pages"   # Directory to store generated HTML files
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 # Copy CSS to output directory
-shutil.copy("style.css", os.path.join(output_dir, "style.css"))
+shutil.copy("style.css", os.path.join(OUTPUT_DIR, "style.css"))
 
 # Save "Index" entry as index.html
 if title == "Index":
