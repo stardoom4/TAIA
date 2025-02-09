@@ -96,11 +96,13 @@ def generate_html(entries, tree):
         desc = entry["desc"]
         nav = generate_nav(tree, None)  # Generate hierarchical navigation
 
-        html_content = HTML_TEMPLATE.format(title=title, desc=desc, nav=nav)
-
-        # If the title is "Index", set filename as "index.html"
-        file_name = "index.html" if title.lower() == "index" else f"{title}.html"
+        # If "Index" exists, set filename as "index.html"
+        file_name = "index.html" if title.strip().lower() == "index" else f"{title}.html"
         file_path = os.path.join(OUTPUT_DIR, file_name)
+
+        print(f"🔍 Processing: {title} -> {file_name}")  # Debugging output
+
+        html_content = HTML_TEMPLATE.format(title=title, desc=desc, nav=nav)
 
         with open(file_path, "w", encoding="utf-8") as f:
             f.write(html_content)
