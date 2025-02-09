@@ -40,13 +40,11 @@ def parse_taia(file_path):
     entries = {}
     seen_titles = set()
 
-    with open(file_path, "r", encoding="utf-8") as file:
-        content = file.read().strip()
-
     # Regex to match TITL, UNDE, and DESC
     pattern = r"TITL:\s*(.+?)\n(?:UNDE:\s*(.+?)\n)?DESC:\s*(.+?)(?=\nTITL:|\Z)"
     matches = re.findall(pattern, content, re.DOTALL)
 
+    print("\n=== Parsed Entries ===")
     for match in matches:
         title, parent, desc = match
         title = title.strip()
@@ -60,6 +58,8 @@ def parse_taia(file_path):
         seen_titles.add(title)
 
         entries[title] = {"title": title, "parent": parent, "desc": desc}
+
+        print(f"✔ {title} (Parent: {parent})")  # Debug print
 
     return entries
 
