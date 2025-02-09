@@ -6,7 +6,20 @@ from collections import defaultdict
 # Configuration
 INPUT_FILE = "database/chronicle.taia"  # The .taia file containing wiki entries
 OUTPUT_DIR = "output_pages"   # Directory to store generated HTML files
-            
+
+import shutil
+
+def copy_static_files():
+    """Copies static files like CSS to the output directory."""
+    css_src = "style.css"  # Path to your style.css in the project directory
+    css_dest = os.path.join(OUTPUT_DIR, "style.css")
+
+    try:
+        shutil.copy(css_src, css_dest)
+        print("✅ Copied style.css to output directory.")
+    except FileNotFoundError:
+        print("❌ Error: style.css not found. Ensure it exists in the project directory.")
+
 # HTML Template
 HTML_TEMPLATE = """<!DOCTYPE html>
 <html lang="en">
@@ -14,7 +27,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{title}</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <nav>
