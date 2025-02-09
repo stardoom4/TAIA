@@ -14,7 +14,7 @@ os.makedirs(OUTPUT_DIR, exist_ok=True)
 shutil.copy("style.css", os.path.join(OUTPUT_DIR, "style.css"))
 
 # Save the file
-with open(os.path.join(output_dir, file_name), "w", encoding="utf-8") as f:
+with open(os.path.join(OUTPUT_DIR, file_name), "w", encoding="utf-8") as f:
     f.write(html_content)
 
 # HTML Template
