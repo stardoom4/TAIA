@@ -86,40 +86,39 @@ def build_tree(entries):
     return tree
             
 def generate_nav(entries, tree, current_page):
-    """Generates navigation:
-       - Includes the outermost master page of the current page.
-       - Shows direct subpages of the current page.
-    """
+    """Generates hierarchical navigation but always includes master pages."""
     nav_html = "<ul>\n"
 
-    # Find the outermost master for the current page
-    outer_master = get_outermost_master(entries, current_page)
+    # 🔹 Always include master pages (Index, Faora, Nova, etc.)
+    for master in sorted(entries.keys()):
+        if entries[master]["parent"] is None:  # Master page check
+            nav_html += f'<li><a href="{master}.html">{master}</a></li>\n'
 
-    if outer_master and outer_master != current_page:
-        nav_html += f'  <li><a href="{outer_master}.html">{outer_master}</a> (Master)</li>\n'
-
-    # Show direct subpages
+    # 🔹 Show child pages if current page is a master page
     if current_page in tree:
+        nav_html += "<ul>\n"
         for child in sorted(tree[current_page]):
             nav_html += f'  <li><a href="{child}.html">{child}</a></li>\n'
+        nav_html += "</ul>\n"
 
     nav_html += "</ul>\n"
     return nav_html
 
 
-def generate_html(entries, tree, master_pages):
+def generate_html(entries, tree):
     """Generates an HTML page for each wiki entry."""
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
     for title, entry in entries.items():
         desc = entry["desc"]
-        nav = generate_nav(entries, tree, title)  # `master_pages` is not needed here
+        nav = generate_nav(entries, tree, title)  # Generate nav for each page
 
         html_content = HTML_TEMPLATE.format(title=title, desc=desc, nav=nav)
         file_path = os.path.join(OUTPUT_DIR, f"{title}.html")
 
         with open(file_path, "w", encoding="utf-8") as f:
             f.write(html_content)
+
 
 
 def generate_homepage(entries, tree, master_pages):
