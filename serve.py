@@ -63,6 +63,12 @@ def parse_taia(file_path):
 
     return entries
 
+def get_outermost_master(entries, title):
+    """Finds the outermost master page of a given entry."""
+    while title in entries and entries[title]["parent"]:
+        title = entries[title]["parent"]  # Move up to the parent
+    return title  # The topmost master page
+
 def get_master_pages(entries):
     """Finds all top-level master pages (pages that are parents but not children)."""
     children = {entry["parent"] for entry in entries.values() if entry["parent"]}
@@ -78,39 +84,36 @@ def build_tree(entries):
         tree[parent].append(title)  # Add child to its parent
 
     return tree
-
-def generate_nav(entries, tree, current_page, master_pages):
-    """Generates navigation with:
-       - Master pages on Index
-       - Master + direct subpages on other pages.
+            
+def generate_nav(entries, tree, current_page):
+    """Generates navigation:
+       - Includes the outermost master page of the current page.
+       - Shows direct subpages of the current page.
     """
     nav_html = "<ul>\n"
 
-    if current_page == "Index":
-        # Show only master pages on Index
-        for master in sorted(master_pages):
-            nav_html += f'  <li><a href="{master}.html">{master}</a></li>\n'
-    else:
-        # Show the current page's master (if any)
-        parent = entries[current_page].get("parent")
-        if parent:
-            nav_html += f'  <li><a href="{parent}.html">{parent}</a> (Master)</li>\n'
+    # Find the outermost master for the current page
+    outer_master = get_outermost_master(entries, current_page)
 
-        # Show subpages of the current page
-        if current_page in tree:
-            for child in sorted(tree[current_page]):
-                nav_html += f'  <li><a href="{child}.html">{child}</a></li>\n'
+    if outer_master and outer_master != current_page:
+        nav_html += f'  <li><a href="{outer_master}.html">{outer_master}</a> (Master)</li>\n'
+
+    # Show direct subpages
+    if current_page in tree:
+        for child in sorted(tree[current_page]):
+            nav_html += f'  <li><a href="{child}.html">{child}</a></li>\n'
 
     nav_html += "</ul>\n"
     return nav_html
 
-def generate_html(entries, tree, master_pages):
+
+def generate_html(entries, tree):
     """Generates an HTML page for each wiki entry."""
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
     for title, entry in entries.items():
         desc = entry["desc"]
-        nav = generate_nav(entries, tree, title, master_pages)  # Pass entries
+        nav = generate_nav(entries, tree, title)  # Pass entries
 
         html_content = HTML_TEMPLATE.format(title=title, desc=desc, nav=nav)
         file_path = os.path.join(OUTPUT_DIR, f"{title}.html")
@@ -119,15 +122,20 @@ def generate_html(entries, tree, master_pages):
             f.write(html_content)
 
 
-def generate_homepage(entries, tree, master_pages):
-    """Generates index.html for the homepage with only master pages."""
-    if "Index" in entries:
-        index_desc = entries["Index"]["desc"]
-        nav = generate_nav(entries, tree, "Index", master_pages)  # Pass entries
-        
-        index_content = HTML_TEMPLATE.format(title="Index", desc=index_desc, nav=nav)
-        with open(os.path.join(OUTPUT_DIR, "index.html"), "w", encoding="utf-8") as f:
-            f.write(index_content)
+def generate_homepage(entries, tree):
+    """Generates index.html with only the outermost master pages."""
+    index_desc = entries.get("Index", {}).get("desc", "Welcome to the Wiki.")
+    master_pages = {get_outermost_master(entries, title) for title in entries}
+
+    nav_html = "<ul>\n"
+    for master in sorted(master_pages):
+        nav_html += f'  <li><a href="{master}.html">{master}</a></li>\n'
+    nav_html += "</ul>\n"
+
+    index_content = HTML_TEMPLATE.format(title="Index", desc=index_desc, nav=nav_html)
+
+    with open(os.path.join(OUTPUT_DIR, "index.html"), "w", encoding="utf-8") as f:
+        f.write(index_content)
 
 def main():
     """Main function to generate the static wiki."""
