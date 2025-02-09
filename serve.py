@@ -107,13 +107,13 @@ def generate_nav(entries, tree, current_page):
     return nav_html
 
 
-def generate_html(entries, tree):
+def generate_html(entries, tree, master_pages):
     """Generates an HTML page for each wiki entry."""
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
     for title, entry in entries.items():
         desc = entry["desc"]
-        nav = generate_nav(entries, tree, title)  # Pass entries
+        nav = generate_nav(entries, tree, title)  # `master_pages` is not needed here
 
         html_content = HTML_TEMPLATE.format(title=title, desc=desc, nav=nav)
         file_path = os.path.join(OUTPUT_DIR, f"{title}.html")
