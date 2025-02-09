@@ -74,7 +74,7 @@ def generate_nav(tree, current_title=None):
     return nav_html
 
 def generate_html(tree, index):
-    """Generates HTML pages for all entries."""
+    """Generates HTML pages for all entries, ensuring all pages exist."""
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
     for title, entry in index.items():
