@@ -13,10 +13,6 @@ os.makedirs(OUTPUT_DIR, exist_ok=True)
 # Copy CSS to output directory
 shutil.copy("style.css", os.path.join(OUTPUT_DIR, "style.css"))
 
-# Save the file
-with open(os.path.join(OUTPUT_DIR, style.css), "w", encoding="utf-8") as f:
-    f.write(html_content)
-
 # HTML Template
 HTML_TEMPLATE = """<!DOCTYPE html>
 <html lang="en">
@@ -40,18 +36,15 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 """
 
 def parse_taia(file_path):
+    """Parses the .taia file and returns a dictionary of entries."""
     with open(file_path, "r", encoding="utf-8") as file:
-         content = file.read().strip()
+        content = file.read().strip()
 
     print("\n=== RAW .taia CONTENT ===")
     print(content)  # Print the file content exactly as read
 
-    """Parses the .taia file and returns a dictionary of entries."""
     entries = {}
     seen_titles = set()
-
-    with open(file_path, "r", encoding="utf-8") as file:
-        content = file.read().strip()
 
     # Regex to match TITL, UNDE, and DESC
     pattern = r"TITL:\s*(.+?)\n(?:UNDE:\s*(.+?)\n)?DESC:\s*(.+?)(?=\nTITL:|\Z)"
@@ -106,23 +99,20 @@ def generate_html(entries, tree):
         desc = entry["desc"]
         nav = generate_nav(tree, None)  # Use full navigation on every page
 
+        # Ensure "Index" becomes "index.html"
+        file_name = "index.html" if title.lower() == "index" else f"{title}.html"
+        file_path = os.path.join(OUTPUT_DIR, file_name)
+
         html_content = HTML_TEMPLATE.format(title=title, desc=desc, nav=nav)
-        file_path = os.path.join(OUTPUT_DIR, f"{title}.html")
 
         with open(file_path, "w", encoding="utf-8") as f:
             f.write(html_content)
 
-# Save "Index" entry as index.html
-if title == "Index":
-    file_name = "index.html"
-else:
-    file_name = f"{title}.html"
-    
 def generate_index(tree):
     """Generates the main index page with navigation."""
     full_nav = generate_nav(tree, None)
     index_content = HTML_TEMPLATE.format(title="Wiki Index", desc="Welcome to the Wiki.", nav=full_nav)
-    
+
     with open(os.path.join(OUTPUT_DIR, "index.html"), "w", encoding="utf-8") as f:
         f.write(index_content)
 
@@ -152,7 +142,8 @@ def main():
     # 🔴 Debugging: Check if all pages were generated
     print("\n=== Generated Pages ===")
     for title in entries:
-        file_path = os.path.join(OUTPUT_DIR, f"{title}.html")
+        file_name = "index.html" if title.lower() == "index" else f"{title}.html"
+        file_path = os.path.join(OUTPUT_DIR, file_name)
         if os.path.exists(file_path):
             print(f"✅ {file_path}")
         else:
