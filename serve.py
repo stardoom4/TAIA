@@ -63,6 +63,12 @@ def parse_taia(file_path):
 
     return entries
 
+def get_master_pages(entries):
+    """Finds all top-level master pages (pages that are parents but not children)."""
+    children = {entry["parent"] for entry in entries.values() if entry["parent"]}
+    masters = [title for title in entries if title not in children or title == "Index"]
+    return masters
+
 def build_tree(entries):
     """Builds a nested tree structure for navigation."""
     tree = defaultdict(list)
@@ -72,29 +78,39 @@ def build_tree(entries):
         tree[parent].append(title)  # Add child to its parent
 
     return tree
-def generate_nav(tree, current_page):
-    """Generates navigation showing only direct subpages of the current page."""
-    if current_page not in tree:
-        return ""  # No subpages, return empty navigation
 
+def generate_nav(tree, current_page, master_pages):
+    """Generates navigation with:
+       - Master pages on Index
+       - Master + direct subpages on other pages.
+    """
     nav_html = "<ul>\n"
-    for child in sorted(tree[current_page]):  # Sort for consistency
-        nav_html += f'  <li><a href="{child}.html">{child}</a></li>\n'
+
+    if current_page == "Index":
+        # Show only master pages on Index
+        for master in sorted(master_pages):
+            nav_html += f'  <li><a href="{master}.html">{master}</a></li>\n'
+    else:
+        # Show the current page's master (if any)
+        parent = entries[current_page]["parent"]
+        if parent:
+            nav_html += f'  <li><a href="{parent}.html">{parent}</a> (Master)</li>\n'
+
+        # Show subpages of the current page
+        if current_page in tree:
+            for child in sorted(tree[current_page]):
+                nav_html += f'  <li><a href="{child}.html">{child}</a></li>\n'
+
     nav_html += "</ul>\n"
-    
-    print(f"🔍 Generating nav for {current_page}: {tree[current_page]}")  # Debugging line
     return nav_html
 
-
-def generate_html(entries, tree):
-    """Generates an HTML page for each wiki entry with a limited navigation."""
+def generate_html(entries, tree, master_pages):
+    """Generates an HTML page for each wiki entry."""
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
     for title, entry in entries.items():
         desc = entry["desc"]
-        nav = generate_nav(tree, title)  # Show only direct subpages
-        
-        print(f"📄 Processing: {title} -> {title}.html")  # Debugging line
+        nav = generate_nav(tree, title, master_pages)  # Pass master pages list
 
         html_content = HTML_TEMPLATE.format(title=title, desc=desc, nav=nav)
         file_path = os.path.join(OUTPUT_DIR, f"{title}.html")
@@ -102,11 +118,12 @@ def generate_html(entries, tree):
         with open(file_path, "w", encoding="utf-8") as f:
             f.write(html_content)
 
-def generate_homepage(entries, tree):
-    """Generates index.html for the homepage based on the Index entry."""
+
+def generate_homepage(entries, tree, master_pages):
+    """Generates index.html for the homepage with only master pages."""
     if "Index" in entries:
         index_desc = entries["Index"]["desc"]
-        nav = generate_nav(tree, "Index")  # Use Index as homepage nav
+        nav = generate_nav(tree, "Index", master_pages)  # Use master page list
         
         index_content = HTML_TEMPLATE.format(title="Index", desc=index_desc, nav=nav)
         with open(os.path.join(OUTPUT_DIR, "index.html"), "w", encoding="utf-8") as f:
@@ -116,34 +133,14 @@ def main():
     """Main function to generate the static wiki."""
     entries = parse_taia(INPUT_FILE)
 
-    # 🔴 Debugging: Check if entries are parsed correctly
-    print("=== Parsed Entries ===")
-    for title, data in entries.items():
-        print(f"Title: {title}")
-        print(f"  Parent: {data['parent']}")
-        print(f"  Description: {data['desc']}\n")
-
     tree = build_tree(entries)
+    master_pages = get_master_pages(entries)  # Identify master pages
 
-    # 🔴 Debugging: Check tree structure
-    print("\n=== Tree Structure ===")
-    for parent, children in tree.items():
-        print(f"Parent: {parent}")
-        for child in children:
-            print(f"  - {child}")
-
-    generate_html(entries, tree)
-
-    # 🔴 Debugging: Check if all pages were generated
-    print("\n=== Generated Pages ===")
-    for title in entries:
-        file_path = os.path.join(OUTPUT_DIR, f"{title}.html")
-        if os.path.exists(file_path):
-            print(f"✅ {file_path}")
-        else:
-            print(f"❌ MISSING: {file_path}")
+    generate_html(entries, tree, master_pages)
+    generate_homepage(entries, tree, master_pages)
 
     print("\n✅ Wiki successfully generated!")
+
 
 if __name__ == "__main__":
     main()
