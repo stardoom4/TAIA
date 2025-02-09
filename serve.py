@@ -6,6 +6,14 @@ from collections import defaultdict
 INPUT_FILE = "database/chronicle.taia"  # The .taia file containing wiki entries
 OUTPUT_DIR = "output_pages"   # Directory to store generated HTML files
 
+entries = parse_taia(INPUT_FILE)
+
+print("=== Parsed Entries ===")
+for title, data in entries.items():
+    print(f"Title: {title}")
+    print(f"  Parent: {data['parent']}")
+    print(f"  Description: {data['desc']}\n")
+
 # HTML Template
 HTML_TEMPLATE = """<!DOCTYPE html>
 <html lang="en">
