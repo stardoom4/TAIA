@@ -122,7 +122,7 @@ def generate_html(entries, tree, master_pages):
             f.write(html_content)
 
 
-def generate_homepage(entries, tree):
+def generate_homepage(entries, tree, master_pages):
     """Generates index.html with only the outermost master pages."""
     index_desc = entries.get("Index", {}).get("desc", "Welcome to the Wiki.")
     master_pages = {get_outermost_master(entries, title) for title in entries}
