@@ -48,7 +48,7 @@ def parse_taia(file_path):
     return entries
 
 def build_tree(entries):
-    """Builds a tree structure from entries using UNDE as hierarchy."""
+    """Builds a hierarchical tree structure from entries using UNDE as hierarchy."""
     tree = defaultdict(list)
     index = {}
 
@@ -58,15 +58,18 @@ def build_tree(entries):
 
     return tree, index
 
-def generate_nav(tree, current_title, level=0):
-    """Recursively generates a nested navigation menu."""
+def generate_nav(tree, current_title=None):
+    """Recursively generates an infinite-level nested navigation menu."""
     if current_title not in tree:
         return ""
-    
+
     nav_html = "<ul>\n"
-    for child in tree[current_title]:
-        nav_html += f'  <li><a href="{child}.html">{child}</a></li>\n'
-        nav_html += generate_nav(tree, child, level + 1)
+    for child in sorted(tree[current_title]):  # Sort for consistency
+        nav_html += f'  <li><a href="{child}.html">{child}</a>\n'
+        sub_nav = generate_nav(tree, child)  # Recursively build child navigation
+        if sub_nav:
+            nav_html += sub_nav
+        nav_html += "  </li>\n"
     nav_html += "</ul>\n"
     return nav_html
 
@@ -74,22 +77,20 @@ def generate_html(tree, index):
     """Generates HTML pages for all entries."""
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
+    # Generate global navigation once (visible on all pages)
+    full_nav = generate_nav(tree, None)
+
     for title, entry in index.items():
-        parent = entry["parent"]
         desc = entry["desc"]
         
-        # Generate navigation starting from root
-        root = None if parent else title
-        nav_html = generate_nav(tree, root)
-        
-        html_content = HTML_TEMPLATE.format(title=title, desc=desc, nav=nav_html)
+        html_content = HTML_TEMPLATE.format(title=title, desc=desc, nav=full_nav)
         with open(os.path.join(OUTPUT_DIR, f"{title}.html"), "w", encoding="utf-8") as f:
             f.write(html_content)
 
 def generate_index(tree):
     """Generates an index page with links to top-level pages."""
-    top_level_nav = generate_nav(tree, None)
-    index_content = HTML_TEMPLATE.format(title="Wiki Index", desc="Welcome to the Wiki.", nav=top_level_nav)
+    full_nav = generate_nav(tree, None)
+    index_content = HTML_TEMPLATE.format(title="Wiki Index", desc="Welcome to the Wiki.", nav=full_nav)
     
     with open(os.path.join(OUTPUT_DIR, "index.html"), "w", encoding="utf-8") as f:
         f.write(index_content)
