@@ -86,24 +86,41 @@ def build_tree(entries):
     return tree
             
 def generate_nav(entries, tree, current_page):
-    """Generates hierarchical navigation but always includes master pages."""
+    """Generates hierarchical navigation:
+    - Always includes master pages
+    - Shows current page's children (if any)
+    - Shows parent chain up to the master page
+    """
     nav_html = "<ul>\n"
 
-    # 🔹 Always include master pages (Index, Faora, Nova, etc.)
-    for master in sorted(entries.keys()):
-        if entries[master]["parent"] is None:  # Master page check
-            nav_html += f'<li><a href="{master}.html">{master}</a></li>\n'
+    # 🔹 Always include all master pages (Index, Faora, Nova, etc.)
+    master_pages = [title for title, data in entries.items() if data["parent"] is None]
+    for master in sorted(master_pages):
+        nav_html += f'<li><a href="{master}.html">{master}</a></li>\n'
 
-    # 🔹 Show child pages if current page is a master page
+    # 🔹 Show the immediate children of the current page (if any exist)
     if current_page in tree:
         nav_html += "<ul>\n"
         for child in sorted(tree[current_page]):
             nav_html += f'  <li><a href="{child}.html">{child}</a></li>\n'
         nav_html += "</ul>\n"
 
+    # 🔹 Show the parent chain up to the master page
+    parent_chain = []
+    parent = entries[current_page]["parent"]
+    while parent:  # Traverse up to the master page
+        parent_chain.append(parent)
+        parent = entries[parent]["parent"] if parent in entries else None
+
+    # Display the full parent chain (if applicable)
+    if parent_chain:
+        nav_html += "<ul>\n"
+        for parent in reversed(parent_chain):  # Reverse so the order is correct
+            nav_html += f'  <li><a href="{parent}.html">{parent}</a></li>\n'
+        nav_html += "</ul>\n"
+
     nav_html += "</ul>\n"
     return nav_html
-
 
 def generate_html(entries, tree, master_pages):
     """Generates an HTML page for each wiki entry."""
