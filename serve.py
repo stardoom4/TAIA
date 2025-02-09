@@ -79,7 +79,7 @@ def build_tree(entries):
 
     return tree
 
-def generate_nav(tree, current_page, master_pages):
+def generate_nav(entries, tree, current_page, master_pages):
     """Generates navigation with:
        - Master pages on Index
        - Master + direct subpages on other pages.
@@ -92,7 +92,7 @@ def generate_nav(tree, current_page, master_pages):
             nav_html += f'  <li><a href="{master}.html">{master}</a></li>\n'
     else:
         # Show the current page's master (if any)
-        parent = entries[current_page]["parent"]
+        parent = entries[current_page].get("parent")
         if parent:
             nav_html += f'  <li><a href="{parent}.html">{parent}</a> (Master)</li>\n'
 
@@ -110,7 +110,7 @@ def generate_html(entries, tree, master_pages):
 
     for title, entry in entries.items():
         desc = entry["desc"]
-        nav = generate_nav(tree, title, master_pages)  # Pass master pages list
+        nav = generate_nav(entries, tree, title, master_pages)  # Pass entries
 
         html_content = HTML_TEMPLATE.format(title=title, desc=desc, nav=nav)
         file_path = os.path.join(OUTPUT_DIR, f"{title}.html")
@@ -123,7 +123,7 @@ def generate_homepage(entries, tree, master_pages):
     """Generates index.html for the homepage with only master pages."""
     if "Index" in entries:
         index_desc = entries["Index"]["desc"]
-        nav = generate_nav(tree, "Index", master_pages)  # Use master page list
+        nav = generate_nav(entries, tree, "Index", master_pages)  # Pass entries
         
         index_content = HTML_TEMPLATE.format(title="Index", desc=index_desc, nav=nav)
         with open(os.path.join(OUTPUT_DIR, "index.html"), "w", encoding="utf-8") as f:
