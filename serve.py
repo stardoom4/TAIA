@@ -13,12 +13,6 @@ os.makedirs(OUTPUT_DIR, exist_ok=True)
 # Copy CSS to output directory
 shutil.copy("style.css", os.path.join(OUTPUT_DIR, "style.css"))
 
-# Save "Index" entry as index.html
-if title == "Index":
-    file_name = "index.html"
-else:
-    file_name = f"{title}.html"
-
 # Save the file
 with open(os.path.join(output_dir, file_name), "w", encoding="utf-8") as f:
     f.write(html_content)
@@ -118,6 +112,12 @@ def generate_html(entries, tree):
         with open(file_path, "w", encoding="utf-8") as f:
             f.write(html_content)
 
+# Save "Index" entry as index.html
+if title == "Index":
+    file_name = "index.html"
+else:
+    file_name = f"{title}.html"
+    
 def generate_index(tree):
     """Generates the main index page with navigation."""
     full_nav = generate_nav(tree, None)
