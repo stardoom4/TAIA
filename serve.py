@@ -112,7 +112,6 @@ def generate_html(entries, tree):
 def generate_index(tree):
     """Generates the main index page with navigation."""
     full_nav = generate_nav(tree, None)
-    index_content = HTML_TEMPLATE.format(title="Wiki Index", desc="Welcome to the Wiki.", nav=full_nav)
     
     with open(os.path.join(OUTPUT_DIR, "index.html"), "w", encoding="utf-8") as f:
         f.write(index_content)
